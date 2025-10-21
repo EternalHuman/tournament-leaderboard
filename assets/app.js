@@ -1,5 +1,37 @@
 const fmtNumber = v => (typeof v === 'number' ? v.toLocaleString('ru-RU') : (v ?? ''));
 const fmtFloat = v => (typeof v === 'number' ? v.toLocaleString('ru-RU', {maximumFractionDigits:2}) : (v ?? ''));
+const toNumber = value => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const normalized = value.replace(/\s+/g, '').replace(',', '.');
+    const n = Number(normalized);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  return NaN;
+};
+const pluralizePoints = value => {
+  const num = Math.abs(Math.trunc(value));
+  if (!Number.isFinite(value) || Math.floor(Math.abs(value)) !== Math.abs(value)) {
+    return 'очков';
+  }
+  const mod10 = num % 10;
+  const mod100 = num % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'очко';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'очка';
+  return 'очков';
+};
+const formatPoints = (value, { signed = true } = {}) => {
+  const num = toNumber(value);
+  if (!Number.isFinite(num)) {
+    const prefix = signed ? '+' : '';
+    return `${prefix}${value ?? ''} очков`;
+  }
+  const absValue = Math.abs(num);
+  const formatted = Number.isInteger(absValue) ? fmtNumber(absValue) : fmtFloat(absValue);
+  const signChar = signed ? (num >= 0 ? '+' : '-') : (num < 0 ? '-' : '');
+  const suffix = pluralizePoints(num);
+  return `${signChar}${formatted} ${suffix}`;
+};
 const $ = sel => document.querySelector(sel);
 
 async function loadJSON(path) {
@@ -89,21 +121,44 @@ async function init() {
     $('#title').textContent = tInfo?.title || 'Турнир';
 
     // Overview
-    $('#t-desc').textContent = tInfo?.description || '';
+    $('#t-desc').textContent = tInfo?.description || 'Описание будет добавлено позже.';
     const pl = tInfo?.scoring?.placements || [];
     const plList = $('#t-placements');
     plList.innerHTML = '';
     pl.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'kv';
-      div.innerHTML = `<div class="k">Место ${p.place}</div><div class="v">+${fmtNumber(p.points)} оч.</div>`;
-      plList.appendChild(div);
+      const placeValue = p.place;
+      const placeLabel = (typeof placeValue === 'number') ? fmtNumber(placeValue) : (placeValue ?? '-');
+      const pointsLabel = formatPoints(p.points ?? 0);
+      const row = document.createElement('div');
+      row.className = 'placement-row';
+      row.innerHTML = `
+        <div class="placement-rank"><span>${placeLabel}</span></div>
+        <div class="placement-body">
+          <div class="placement-label">Место ${placeLabel}</div>
+          <div class="placement-points">${pointsLabel}</div>
+        </div>
+      `;
+      plList.appendChild(row);
     });
-    $('#t-kill').textContent = '+' + fmtFloat(tInfo?.scoring?.killPoints ?? 0) + ' оч. за убийство';
+    if (!pl.length) {
+      plList.innerHTML = `
+        <div class="placement-row">
+          <div class="placement-rank"><span>–</span></div>
+          <div class="placement-body">
+            <div class="placement-label">Нет данных</div>
+            <div class="placement-points">Правила начисления будут обновлены позже</div>
+          </div>
+        </div>
+      `;
+    }
+
+    const killPoints = tInfo?.scoring?.killPoints ?? 0;
+    $('#t-kill').textContent = formatPoints(killPoints);
     $('#t-matches').textContent = fmtNumber(tInfo?.matches?.total ?? 0);
     const maps = tInfo?.matches?.maps || [];
-    $('#t-maps').innerHTML = maps.map(m => `<span class="pill">${m}</span>`).join('');
-    $('#t-rules').innerHTML = (tInfo?.rules||[]).map(r => `<div>• ${r}</div>`).join('');
+    $('#t-maps').innerHTML = maps.length ? maps.map(m => `<span class="pill">${m}</span>`).join('') : '<span class="pill">TBD</span>';
+    const rules = tInfo?.rules || [];
+    $('#t-rules').innerHTML = rules.length ? rules.map(r => `<div>${r}</div>`).join('') : '<div>Тай-брейк не задан</div>';
 
     // Teams
     const teamCols = [
