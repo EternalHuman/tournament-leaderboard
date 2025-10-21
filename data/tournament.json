@@ -1,50 +1,50 @@
 {
-  "title": "Autumn Cup 2025",
-  "description": "Командный турнир. Стартовая стадия — групповой этап, затем плей-офф.",
+  "title": "PUBG Autumn Cup 2025",
+  "description": "PUBG турнир: 33 команды, плейсмент + очки за киллы. Демо-страница.",
   "scoring": {
     "placements": [
       {
-        "place": 1,
+        "place": "1",
         "points": 10
       },
       {
-        "place": 2,
+        "place": "2",
+        "points": 8
+      },
+      {
+        "place": "3-5",
         "points": 6
       },
       {
-        "place": 3,
+        "place": "6-8",
         "points": 4
       },
       {
-        "place": 4,
-        "points": 3
-      },
-      {
-        "place": 5,
+        "place": "9-12",
         "points": 2
       },
       {
-        "place": 6,
+        "place": "13-16",
         "points": 1
+      },
+      {
+        "place": "17-33",
+        "points": 0
       }
     ],
-    "killPoints": 1,
-    "revivePoints": 0.5,
-    "assistPoints": 0.25
+    "killPoints": 1
   },
   "matches": {
     "total": 6,
     "maps": [
-      "Breeze",
-      "Ascent",
-      "Haven",
-      "Split",
-      "Lotus",
-      "Bind"
+      "Erangel",
+      "Miramar",
+      "Sanhok",
+      "Vikendi",
+      "Taego"
     ]
   },
   "rules": [
-    "Тай-брейкеры: очки → убийства → среднее место → личная встреча.",
-    "Очки за киллы/ассисты/ревайвы суммируются к очкам за место."
+    "Тай-брейкер: сравнение среднего места (меньше — лучше)."
   ]
 }

@@ -17,7 +17,6 @@ function setActiveTab(id) {
   document.querySelectorAll('[data-panel]').forEach(el => {
     el.style.display = (el.dataset.panel === id) ? 'block' : 'none';
   });
-  // remember in hash
   location.hash = id;
 }
 
@@ -39,7 +38,6 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
       if (isNum) return ((aV??0)-(bV??0))*m;
       return String(aV??'').localeCompare(String(bV??''), 'ru', {numeric:true, sensitivity:'base'})*m;
     });
-    // render
     const tbody = tableEl.querySelector('tbody');
     tbody.innerHTML='';
     for (const r of data) {
@@ -56,14 +54,12 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
       }
       tbody.appendChild(tr);
     }
-    // header arrows
     tableEl.querySelectorAll('th.sortable').forEach(th => {
       th.dataset.dir = th.dataset.key === state.key ? state.dir : '';
     });
     if (counterEl) counterEl.textContent = data.length + ' записей';
   }
 
-  // header events
   tableEl.querySelectorAll('th.sortable').forEach(th => {
     th.addEventListener('click', () => {
       const key = th.dataset.key;
@@ -72,7 +68,6 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
       update();
     });
   });
-  // filter
   filterInput?.addEventListener('input', e => { state.q = e.target.value.trim(); update(); });
 
   update();
@@ -91,29 +86,26 @@ async function init() {
       loadJSON('data/players.json')
     ]);
 
-    // Header title
     $('#title').textContent = tInfo?.title || 'Турнир';
 
-    // Panel: Overview
+    // Overview
     $('#t-desc').textContent = tInfo?.description || '';
     const pl = tInfo?.scoring?.placements || [];
     const plList = $('#t-placements');
     plList.innerHTML = '';
     pl.forEach(p => {
-      const li = document.createElement('div');
-      li.className = 'kv';
-      li.innerHTML = `<div class="k">Место ${p.place}</div><div class="v">+${fmtNumber(p.points)} оч.</div>`;
-      plList.appendChild(li);
+      const div = document.createElement('div');
+      div.className = 'kv';
+      div.innerHTML = `<div class="k">Место ${p.place}</div><div class="v">+${fmtNumber(p.points)} оч.</div>`;
+      plList.appendChild(div);
     });
     $('#t-kill').textContent = '+' + fmtFloat(tInfo?.scoring?.killPoints ?? 0) + ' оч. за убийство';
-    $('#t-assist').textContent = '+' + fmtFloat(tInfo?.scoring?.assistPoints ?? 0) + ' оч. за поддержку';
-    $('#t-revive').textContent = '+' + fmtFloat(tInfo?.scoring?.revivePoints ?? 0) + ' оч. за ревайв';
     $('#t-matches').textContent = fmtNumber(tInfo?.matches?.total ?? 0);
     const maps = tInfo?.matches?.maps || [];
     $('#t-maps').innerHTML = maps.map(m => `<span class="pill">${m}</span>`).join('');
     $('#t-rules').innerHTML = (tInfo?.rules||[]).map(r => `<div>• ${r}</div>`).join('');
 
-    // Panel: Teams
+    // Teams
     const teamCols = [
       { key:'place',   title:'#', num:true, format:'int' },
       { key:'team',    title:'Команда' },
@@ -124,12 +116,16 @@ async function init() {
     ];
     const perMatchEl = $('#perMatch');
     perMatchEl.innerHTML = teamRows.map(t => {
-      const pills = (t.perMatchPoints||[]).map(v => `<span class="pill">${fmtNumber(v)}</span>`).join('');
-      return `<div class="kv"><div class="k">${t.team}</div><div class="v pills">${pills}</div></div>`;
+      const chips = (t.perMatchPoints||[]).map((pts, i) => {
+        const k = t.perMatchKills?.[i] ?? 0;
+        const pl = t.perMatchPlacement?.[i] ?? '-';
+        return `<span class="matchchip">M${i+1}: +${pts} • ${k}K • Pl ${pl}</span>`;
+      }).join(' ');
+      return `<div class="kv"><div class="k">${t.team}</div><div class="v matchline">${chips}</div></div>`;
     }).join('');
     sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'points', dir:'desc'});
 
-    // Panel: Players
+    // Players
     const playerCols = [
       { key:'player',  title:'Игрок' },
       { key:'team',    title:'Команда' },
@@ -141,7 +137,7 @@ async function init() {
     ];
     sortable($('#playersTable'), playerRows, playerCols, $('#playerCount'), $('#playerFilter'), {key:'adr', dir:'desc'});
 
-    // tabs setup
+    // tabs
     document.querySelectorAll('[data-tab]').forEach(tab => {
       tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
     });

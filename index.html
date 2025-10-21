@@ -6,7 +6,7 @@
   <title>Лидерборд турнира</title>
   <meta name="description" content="Публичный лидерборд турнира: вкладки Обзор, Команды, Игроки."/>
   <meta property="og:title" content="Лидерборд турнира"/>
-  <meta property="og:description" content="Обзор правил, таблица команд и игроков в реальном времени."/>
+  <meta property="og:description" content="Обзор правил, таблица команд и игроков."/>
   <meta property="og:type" content="website"/>
   <link rel="stylesheet" href="assets/styles.css"/>
 </head>
@@ -36,13 +36,11 @@
         <div class="col-6">
           <div class="card">
             <h2>Очки за места</h2>
-            <div id="t-placements" class="grid col-12" style="display:grid; gap:10px"></div>
+            <div id="t-placements" class="placements"></div>
           </div>
           <div class="card">
             <h2>Очки за действия</h2>
             <div class="kv"><div class="k">Убийство</div><div class="v" id="t-kill"></div></div>
-            <div class="kv" style="margin-top:10px"><div class="k">Поддержка</div><div class="v" id="t-assist"></div></div>
-            <div class="kv" style="margin-top:10px"><div class="k">Ревайв</div><div class="v" id="t-revive"></div></div>
           </div>
         </div>
         <div class="col-6">
@@ -50,13 +48,13 @@
             <h2>Формат турнира</h2>
             <div class="kv"><div class="k">Количество матчей</div><div class="v" id="t-matches"></div></div>
             <hr class="sep"/>
-            <div><strong>Карты:</strong></div>
+            <div><strong>Карты (PUBG):</strong></div>
             <div id="t-maps" class="pills" style="margin-top:10px"></div>
             <hr class="sep"/>
             <div><strong>Описание:</strong></div>
             <div id="t-desc" style="margin-top:8px"></div>
             <hr class="sep"/>
-            <div><strong>Доп. правила:</strong></div>
+            <div><strong>Тай-брейк:</strong></div>
             <div id="t-rules" style="margin-top:8px"></div>
           </div>
         </div>
@@ -84,7 +82,7 @@
         <tbody></tbody>
       </table>
       <div class="card" style="margin-top:16px">
-        <h2>Очки по матчам</h2>
+        <h2>По матчам: очки • киллы • плейсмент</h2>
         <div id="perMatch" class="grid col-12" style="display:grid; gap:10px"></div>
       </div>
     </section>
@@ -112,7 +110,7 @@
       </table>
     </section>
 
-    <div class="footer">© Leaderboard · Статическая страница для GitHub Pages</div>
+    <div class="footer">© Leaderboard · GitHub Pages</div>
   </main>
 
   <script src="assets/app.js"></script>

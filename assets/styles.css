@@ -62,3 +62,15 @@ th.sortable[data-dir="desc"]:after{content:" ↓"}
 .pill{padding:2px 8px; border-radius:999px; background:#0d2033; font-size:12px; color:#c6e2ff; border:1px solid #1f334a}
 hr.sep{border:none; height:1px; background: linear-gradient(90deg, transparent, #2a3448, transparent); margin:16px 0}
 .footer{color:var(--muted); font-size:13px; padding:20px; text-align:center}
+
+/* placements responsive grid fix */
+.placements{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap:10px;
+}
+.placements .kv{padding:10px}
+
+/* per-match chips */
+.matchline{display:flex; gap:6px; flex-wrap:wrap}
+.matchchip{padding:3px 8px; border-radius:999px; background:#0c1b2e; border:1px solid #1f334a; font-size:12px; color:#cfe6ff}
