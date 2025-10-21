@@ -1,0 +1,38 @@
+{
+  "matchId": 5,
+  "map": "Miramar",
+  "date": "2025-03-01T22:00:00Z",
+  "teams": [
+    { "teamId": 1, "placement": 1, "placementPoints": 10, "kills": 9 },
+    { "teamId": 3, "placement": 2, "placementPoints": 8,  "kills": 7 },
+    { "teamId": 2, "placement": 3, "placementPoints": 7,  "kills": 6 },
+    { "teamId": 5, "placement": 4, "placementPoints": 6,  "kills": 5 },
+    { "teamId": 4, "placement": 5, "placementPoints": 5,  "kills": 4 }
+  ],
+  "players": [
+    { "nickname": "Ct0m", "teamId": 1, "adr": 134.7, "kills": 3, "assists": 3, "revives": 1 },
+    { "nickname": "Lion", "teamId": 1, "adr": 126.1, "kills": 3, "assists": 2, "revives": 1 },
+    { "nickname": "Hikka", "teamId": 1, "adr": 118.5, "kills": 2, "assists": 2, "revives": 1 },
+    { "nickname": "Sapfir", "teamId": 1, "adr": 105.2, "kills": 1, "assists": 1, "revives": 1 },
+
+    { "nickname": "Shadow", "teamId": 3, "adr": 125.9, "kills": 3, "assists": 2, "revives": 1 },
+    { "nickname": "Kekw", "teamId": 3, "adr": 114.3, "kills": 2, "assists": 2, "revives": 1 },
+    { "nickname": "Pixel", "teamId": 3, "adr": 104.7, "kills": 1, "assists": 1, "revives": 1 },
+    { "nickname": "Frost", "teamId": 3, "adr": 96.5,  "kills": 1, "assists": 1, "revives": 1 },
+
+    { "nickname": "Evelone", "teamId": 2, "adr": 121.3, "kills": 3, "assists": 2, "revives": 1 },
+    { "nickname": "VipeR", "teamId": 2, "adr": 113.8, "kills": 2, "assists": 2, "revives": 1 },
+    { "nickname": "Snow", "teamId": 2, "adr": 104.6, "kills": 1, "assists": 1, "revives": 1 },
+    { "nickname": "Karma", "teamId": 2, "adr": 92.4,  "kills": 0, "assists": 1, "revives": 1 },
+
+    { "nickname": "Eternal", "teamId": 5, "adr": 118.7, "kills": 2, "assists": 1, "revives": 1 },
+    { "nickname": "Nova", "teamId": 5, "adr": 107.9, "kills": 1, "assists": 1, "revives": 1 },
+    { "nickname": "Blaze", "teamId": 5, "adr": 99.3,  "kills": 1, "assists": 1, "revives": 0 },
+    { "nickname": "Arrow", "teamId": 5, "adr": 90.5,  "kills": 1, "assists": 1, "revives": 1 },
+
+    { "nickname": "Ant1mony", "teamId": 4, "adr": 110.6, "kills": 2, "assists": 1, "revives": 0 },
+    { "nickname": "Lynx", "teamId": 4, "adr": 101.8, "kills": 1, "assists": 1, "revives": 1 },
+    { "nickname": "Rogue", "teamId": 4, "adr": 95.7,  "kills": 1, "assists": 1, "revives": 1 },
+    { "nickname": "Muse", "teamId": 4, "adr": 86.3,  "kills": 0, "assists": 1, "revives": 1 }
+  ]
+}
