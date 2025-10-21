@@ -34,6 +34,65 @@ const formatPoints = (value, { signed = true } = {}) => {
 };
 const $ = sel => document.querySelector(sel);
 
+const normalizePlacementRanges = value => {
+  const ranges = [];
+  if (Array.isArray(value)) {
+    value.forEach(v => {
+      normalizePlacementRanges(v).forEach(range => ranges.push(range));
+    });
+    return ranges;
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    ranges.push({ min: value, max: value });
+    return ranges;
+  }
+  if (typeof value !== 'string') return ranges;
+
+  const tokens = value.split(',');
+  tokens.forEach(token => {
+    const text = token.trim();
+    if (!text) return;
+    const match = text.match(/^(\d+)(?:\s*[-–—]\s*(\d+))?$/);
+    if (match) {
+      const start = Number(match[1]);
+      const end = Number(match[2] ?? match[1]);
+      if (Number.isFinite(start) && Number.isFinite(end)) {
+        const min = Math.min(start, end);
+        const max = Math.max(start, end);
+        ranges.push({ min, max });
+      }
+      return;
+    }
+    const num = toNumber(text);
+    if (Number.isFinite(num)) {
+      ranges.push({ min: num, max: num });
+    }
+  });
+  return ranges;
+};
+
+const createPlacementResolver = placements => {
+  const rules = [];
+  (Array.isArray(placements) ? placements : []).forEach(entry => {
+    const points = toNumber(entry?.points);
+    if (!Number.isFinite(points)) return;
+    const ranges = normalizePlacementRanges(entry?.place);
+    if (!ranges.length) return;
+    rules.push({ ranges, points });
+  });
+
+  return placement => {
+    const placeNumber = toNumber(placement);
+    if (!Number.isFinite(placeNumber)) return 0;
+    for (const rule of rules) {
+      if (rule.ranges.some(range => placeNumber >= range.min && placeNumber <= range.max)) {
+        return rule.points;
+      }
+    }
+    return 0;
+  };
+};
+
 async function loadJSON(path) {
   const meta = window.__meta || {};
   const v = meta.version ? `?v=${encodeURIComponent(meta.version)}` : '';
@@ -128,6 +187,7 @@ async function init() {
     ]);
 
     const killPoint = toNumber(tInfo?.scoring?.killPoints ?? 0) || 0;
+    const resolvePlacementPoints = createPlacementResolver(tInfo?.scoring?.placements);
     const totalFromInfo = Number(tInfo?.matches?.total) || 0;
 
     const teamsById = new Map();
@@ -254,12 +314,12 @@ async function init() {
       matchTeams.forEach(teamEntry => {
         const stats = ensureTeamStats(teamEntry?.teamId);
         if (!stats) return;
-        const kills = toNumber(teamEntry.kills);
-        const placement = toNumber(teamEntry.placement);
-        const placementPoints = toNumber(teamEntry.placementPoints);
+        const killsRaw = toNumber(teamEntry.kills);
+        const placementRaw = toNumber(teamEntry.placement);
         const totalPointsRaw = toNumber(teamEntry.totalPoints);
-        const killsValue = Number.isFinite(kills) ? kills : 0;
-        const placementPointsValue = Number.isFinite(placementPoints) ? placementPoints : 0;
+        const killsValue = Number.isFinite(killsRaw) ? killsRaw : 0;
+        const placement = Number.isFinite(placementRaw) ? placementRaw : null;
+        const placementPointsValue = placement != null ? resolvePlacementPoints(placement) : 0;
         const computedPoints = Number.isFinite(totalPointsRaw)
           ? totalPointsRaw
           : placementPointsValue + killsValue * killPoint;
@@ -267,14 +327,14 @@ async function init() {
         stats.points += computedPoints;
         stats.kills += killsValue;
         stats.matches += 1;
-        if (Number.isFinite(placement)) {
+        if (placement != null) {
           stats.placementSum += placement;
           stats.placementCount += 1;
         }
         if (slot < stats.perMatchPoints.length) {
           stats.perMatchPoints[slot] = computedPoints;
           stats.perMatchKills[slot] = killsValue;
-          stats.perMatchPlacement[slot] = Number.isFinite(placement) ? placement : null;
+          stats.perMatchPlacement[slot] = placement;
         }
       });
 
@@ -400,9 +460,11 @@ async function init() {
           const entries = (Array.isArray(match.teams) ? match.teams : []).map(teamEntry => {
             const teamInfo = teamsById.get(toNumber(teamEntry.teamId));
             const teamName = teamInfo ? teamInfo.displayName : `Команда ${fmtNumber(teamEntry.teamId ?? '?')}`;
-            const kills = Number.isFinite(toNumber(teamEntry.kills)) ? Number(toNumber(teamEntry.kills)) : 0;
-            const placement = Number.isFinite(toNumber(teamEntry.placement)) ? Number(toNumber(teamEntry.placement)) : null;
-            const placementPoints = Number.isFinite(toNumber(teamEntry.placementPoints)) ? Number(toNumber(teamEntry.placementPoints)) : 0;
+            const killsRaw = toNumber(teamEntry.kills);
+            const kills = Number.isFinite(killsRaw) ? killsRaw : 0;
+            const placementRaw = toNumber(teamEntry.placement);
+            const placement = Number.isFinite(placementRaw) ? placementRaw : null;
+            const placementPoints = placement != null ? resolvePlacementPoints(placement) : 0;
             const totalPointsRaw = toNumber(teamEntry.totalPoints);
             const points = Number.isFinite(totalPointsRaw) ? Number(totalPointsRaw) : placementPoints + kills * killPoint;
             return { teamName, kills, placement, points };
