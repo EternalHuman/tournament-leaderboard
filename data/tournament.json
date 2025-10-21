@@ -1,6 +1,6 @@
 {
   "title": "PUBG des0ut cup 2025",
-  "description": "PUBG турнир: 33 команды, плейсмент + очки за киллы.",
+  "description": "PUBG турнир: 33 команды, места распределяются по очкам, основной хост турнира - twitch.tv/des0ut.",
   "scoring": {
     "placements": [
       {
@@ -50,10 +50,10 @@
     "total": 5,
     "maps": [
       "Erangel",
+      "Miramar",
+      "Vikendi",
       "Erangel",
-      "Miramar",
-      "Miramar",
-      "Vikendi"
+      "Miramar"
     ]
   },
   "rules": [
