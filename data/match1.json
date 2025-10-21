@@ -5,172 +5,138 @@
   "teams" : [ {
     "teamId" : 10,
     "placement" : 1,
-    "placementPoints" : 10,
     "kills" : 11
   }, {
     "teamId" : 6,
     "placement" : 2,
-    "placementPoints" : 8,
     "kills" : 7
   }, {
     "teamId" : 29,
     "placement" : 3,
-    "placementPoints" : 7,
     "kills" : 10
   }, {
     "teamId" : 9,
     "placement" : 4,
-    "placementPoints" : 6,
     "kills" : 4
   }, {
     "teamId" : 17,
     "placement" : 5,
-    "placementPoints" : 5,
     "kills" : 3
   }, {
     "teamId" : 30,
     "placement" : 6,
-    "placementPoints" : 0,
     "kills" : 7
   }, {
     "teamId" : 26,
     "placement" : 7,
-    "placementPoints" : 0,
     "kills" : 5
   }, {
     "teamId" : 32,
     "placement" : 8,
-    "placementPoints" : 0,
     "kills" : 5
   }, {
     "teamId" : 18,
     "placement" : 9,
-    "placementPoints" : 0,
     "kills" : 4
   }, {
     "teamId" : 19,
     "placement" : 10,
-    "placementPoints" : 0,
     "kills" : 2
   }, {
     "teamId" : 7,
     "placement" : 11,
-    "placementPoints" : 0,
     "kills" : 6
   }, {
     "teamId" : 8,
     "placement" : 12,
-    "placementPoints" : 0,
     "kills" : 2
   }, {
     "teamId" : 13,
     "placement" : 13,
-    "placementPoints" : 0,
     "kills" : 2
   }, {
     "teamId" : 1,
     "placement" : 14,
-    "placementPoints" : 0,
     "kills" : 7
   }, {
     "teamId" : 16,
     "placement" : 15,
-    "placementPoints" : 0,
     "kills" : 3
   }, {
     "teamId" : 12,
     "placement" : 16,
-    "placementPoints" : 0,
     "kills" : 3
   }, {
     "teamId" : 27,
     "placement" : 17,
-    "placementPoints" : 0,
     "kills" : 2
   }, {
     "teamId" : 21,
     "placement" : 18,
-    "placementPoints" : 0,
     "kills" : 2
   }, {
     "teamId" : 31,
     "placement" : 19,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 11,
     "placement" : 20,
-    "placementPoints" : 0,
     "kills" : 3
   }, {
     "teamId" : 24,
     "placement" : 21,
-    "placementPoints" : 0,
     "kills" : 1
   }, {
     "teamId" : 23,
     "placement" : 22,
-    "placementPoints" : 0,
     "kills" : 1
   }, {
     "teamId" : 22,
     "placement" : 23,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 3,
     "placement" : 24,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 20,
     "placement" : 25,
-    "placementPoints" : 0,
     "kills" : 2
   }, {
     "teamId" : 14,
     "placement" : 26,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 5,
     "placement" : 27,
-    "placementPoints" : 0,
     "kills" : 1
   }, {
     "teamId" : 15,
     "placement" : 29,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 28,
     "placement" : 30,
-    "placementPoints" : 0,
     "kills" : 1
   }, {
     "teamId" : 2,
     "placement" : 30,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 4,
     "placement" : 31,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 25,
     "placement" : 32,
-    "placementPoints" : 0,
     "kills" : 0
   }, {
     "teamId" : 34,
     "placement" : 33,
-    "placementPoints" : 0,
     "kills" : 2
   }, {
     "teamId" : 33,
     "placement" : 34,
-    "placementPoints" : 0,
     "kills" : 0
   } ],
   "players" : [ {
