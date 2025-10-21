@@ -74,3 +74,46 @@ hr.sep{border:none; height:1px; background: linear-gradient(90deg, transparent, 
 /* per-match chips */
 .matchline{display:flex; gap:6px; flex-wrap:wrap}
 .matchchip{padding:3px 8px; border-radius:999px; background:#0c1b2e; border:1px solid #1f334a; font-size:12px; color:#cfe6ff}
+
+/* Team per-match card layout */
+.pergrid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap:12px;
+}
+.teamcard{
+  background: var(--cardElev);
+  border:1px solid #223245;
+  border-radius:14px;
+  padding:12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.25);
+  display:flex;
+  flex-direction:column;
+  min-height:110px;
+}
+.teamcard-title{
+  text-align:center;
+  font-weight:700;
+  margin:2px 4px 10px;
+  letter-spacing:.2px;
+}
+.teamcard-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:6px;
+  scrollbar-width: thin;
+}
+.teamcard-line::-webkit-scrollbar{height:8px}
+.teamcard-line::-webkit-scrollbar-thumb{background:#1f334a; border-radius:8px}
+.chip{
+  white-space:nowrap;
+  padding:4px 10px;
+  border-radius:999px;
+  background:#0c1b2e;
+  border:1px solid #1f334a;
+  font-size:12px;
+  color:#cfe6ff;
+  flex:0 0 auto;
+}

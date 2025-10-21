@@ -114,16 +114,22 @@ async function init() {
       { key:'placeAvg',title:'Сред. место', num:true, format:'float' },
       { key:'matches', title:'Матчи', num:true, format:'int' },
     ];
+    
     const perMatchEl = $('#perMatch');
+    // Use card tiles with centered team name and horizontal chips
+    perMatchEl.classList.add('pergrid');
     perMatchEl.innerHTML = teamRows.map(t => {
       const chips = (t.perMatchPoints||[]).map((pts, i) => {
         const k = t.perMatchKills?.[i] ?? 0;
         const pl = t.perMatchPlacement?.[i] ?? '-';
-        return `<span class="matchchip">M${i+1}: +${pts} • ${k}K • Pl ${pl}</span>`;
-      }).join(' ');
-      return `<div class="kv"><div class="k">${t.team}</div><div class="v matchline">${chips}</div></div>`;
+        return `<span class="chip">M${i+1}: +${pts} • ${k}K • Pl ${pl}</span>`;
+      }).join('');
+      return `<div class="teamcard">
+        <div class="teamcard-title">${t.team}</div>
+        <div class="teamcard-line">${chips}</div>
+      </div>`;
     }).join('');
-    sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'points', dir:'desc'});
+sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'points', dir:'desc'});
 
     // Players
     const playerCols = [
