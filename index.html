@@ -23,6 +23,7 @@
       <nav class="tabs">
         <div class="tab active" data-tab="overview">Общая информация</div>
         <div class="tab" data-tab="teams">Команды</div>
+        <div class="tab" data-tab="matches">Матчи</div>
         <div class="tab" data-tab="players">Игроки</div>
       </nav>
     </div>
@@ -85,6 +86,13 @@
         <h2>По матчам: очки • киллы • плейсмент</h2>
         <div id="perMatch" class="pergrid"></div>
       </div>
+    </section>
+
+    <!-- Matches -->
+    <section class="card" data-panel="matches" style="display:none">
+      <h2>Матчи</h2>
+      <p class="muted">Сводка по каждому матчу: лидеры по очкам, киллам и плейсменту.</p>
+      <div id="matchesList" class="match-grid"></div>
     </section>
 
     <!-- Players -->

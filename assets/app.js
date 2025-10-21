@@ -129,7 +129,106 @@ async function init() {
         <div class="teamcard-line">${chips}</div>
       </div>`;
     }).join('');
-sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'points', dir:'desc'});
+
+    const matchesEl = $('#matchesList');
+    if (matchesEl) {
+      const maps = tInfo?.matches?.maps || [];
+      const totalMatches = Math.max(
+        tInfo?.matches?.total ?? 0,
+        ...teamRows.map(t => t.perMatchPoints?.length || 0),
+        ...teamRows.map(t => t.perMatchKills?.length || 0),
+        ...teamRows.map(t => t.perMatchPlacement?.length || 0)
+      );
+
+      if (!totalMatches) {
+        matchesEl.innerHTML = '<div class="match-empty">Нет данных о матчах.</div>';
+      } else {
+        const matchCards = [];
+        for (let i = 0; i < totalMatches; i += 1) {
+          const entries = teamRows.map(t => ({
+            team: t.team,
+            points: t.perMatchPoints?.[i],
+            kills: t.perMatchKills?.[i],
+            placement: t.perMatchPlacement?.[i]
+          })).filter(e => e.points != null || e.kills != null || e.placement != null);
+
+          entries.forEach(e => {
+            e.points = typeof e.points === 'number' ? e.points : Number(e.points ?? 0);
+            e.kills = typeof e.kills === 'number' ? e.kills : Number(e.kills ?? 0);
+            if (typeof e.placement === 'string') {
+              const n = Number(e.placement);
+              e.placement = Number.isFinite(n) ? n : e.placement;
+            }
+          });
+
+          entries.sort((a, b) => {
+            const diff = (b.points ?? 0) - (a.points ?? 0);
+            if (diff !== 0) return diff;
+            return (b.kills ?? 0) - (a.kills ?? 0);
+          });
+
+          const topKills = entries.reduce((best, curr) => {
+            if (!best) return curr;
+            if ((curr.kills ?? -Infinity) > (best.kills ?? -Infinity)) return curr;
+            if ((curr.kills ?? -Infinity) === (best.kills ?? -Infinity) && (curr.points ?? 0) > (best.points ?? 0)) return curr;
+            return best;
+          }, null);
+          const bestPlacement = entries.reduce((best, curr) => {
+            if (typeof curr.placement !== 'number') return best;
+            if (!best) return curr;
+            if ((curr.placement ?? Infinity) < (best.placement ?? Infinity)) return curr;
+            if ((curr.placement ?? Infinity) === (best.placement ?? Infinity) && (curr.points ?? 0) > (best.points ?? 0)) return curr;
+            return best;
+          }, null);
+
+          const rowsHtml = entries.map((entry, idx) => {
+            const pointsText = `+${fmtNumber(entry.points ?? 0)} оч.`;
+            const killsText = `${fmtNumber(entry.kills ?? 0)}K`;
+            const placeText = entry.placement != null ? `Pl ${fmtNumber(entry.placement)}` : 'Pl -';
+            return `<div class="match-row ${idx === 0 ? 'is-first' : ''}">
+              <span class="rank">#${idx + 1}</span>
+              <span class="team-name">${entry.team}</span>
+              <span class="stat">${pointsText}</span>
+              <span class="placement">${killsText} • ${placeText}</span>
+            </div>`;
+          }).join('');
+
+          const metaLines = [];
+          const leader = entries[0];
+          if (leader) {
+            const leaderPoints = `+${fmtNumber(leader.points ?? 0)} оч.`;
+            const leaderKills = `${fmtNumber(leader.kills ?? 0)}K`;
+            const leaderPlace = leader.placement != null
+              ? (typeof leader.placement === 'number' ? fmtNumber(leader.placement) : leader.placement)
+              : '—';
+            metaLines.push(`Лидер: <strong>${leader.team}</strong> (${leaderPoints}, ${leaderKills}, место ${leaderPlace})`);
+          }
+          if (topKills && topKills !== leader) {
+            metaLines.push(`Больше всего киллов: <strong>${topKills.team}</strong> (${fmtNumber(topKills.kills ?? 0)}K)`);
+          }
+          if (bestPlacement && bestPlacement !== leader) {
+            const bestPlace = bestPlacement.placement != null ? fmtNumber(bestPlacement.placement) : '—';
+            metaLines.push(`Лучший плейсмент: <strong>${bestPlacement.team}</strong> (место ${bestPlace})`);
+          }
+
+          const metaHtml = metaLines.length ? metaLines.map(line => `<div>${line}</div>`).join('') : '<div>Нет дополнительной статистики.</div>';
+
+          matchCards.push(`
+            <div class="match-card">
+              <div class="match-card-header">
+                <div class="match-title">Матч ${i + 1}</div>
+                ${maps[i] ? `<div class="match-map">${maps[i]}</div>` : ''}
+              </div>
+              <div class="match-meta">${metaHtml}</div>
+              ${rowsHtml ? `<div class="match-rows">${rowsHtml}</div>` : '<div class="match-empty">Нет данных по этому матчу.</div>'}
+            </div>
+          `);
+        }
+
+        matchesEl.innerHTML = matchCards.join('');
+      }
+    }
+    sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'points', dir:'desc'});
 
     // Players
     const playerCols = [
