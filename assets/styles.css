@@ -17,16 +17,28 @@ html,body{min-height:100%}
 body{
   margin:0;
   font:16px/1.6 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+    radial-gradient(1200px 700px at -10% -20%, rgba(122,167,255,.25), transparent 70%),
+    radial-gradient(1000px 600px at 110% 0%, rgba(88,245,193,.22), transparent 70%),
+    linear-gradient(180deg, var(--bg), var(--bg-tint));
+  color:var(--fg);
+  -webkit-font-smoothing:antialiased;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
   background:
     radial-gradient(1200px 700px at -10% -20%, rgba(122,167,255,.25), transparent 70%),
     radial-gradient(1000px 600px at 110% 0%, rgba(88,245,193,.22), transparent 70%),
     linear-gradient(180deg, var(--bg), var(--bg-tint));
   background-repeat:no-repeat, no-repeat, no-repeat;
-  background-attachment:fixed, fixed, fixed;
   background-size:1400px 900px, 1200px 720px, cover;
-  color:var(--fg);
-  -webkit-font-smoothing:antialiased;
+  will-change:transform;
 }
+
 a{color:var(--accent); text-decoration:none}
 .header{
   position:sticky;
@@ -320,3 +332,58 @@ th.sortable[data-dir="desc"]:after{content:" ↓"}
   .match-grid{grid-template-columns:1fr}
   .placements-list{grid-template-columns:1fr}
 }
+
+
+/* ==== Responsive tables & improved teamcard scrollbar ==== */
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  border-radius:14px;
+}
+.table-wrap > table{
+  min-width:720px;
+  border-radius:inherit;
+}
+
+/* Mobile column pruning */
+@media (max-width:600px){
+  /* Teams table: hide Avg place + Matches */
+  #teamsTable th:nth-child(5), #teamsTable td:nth-child(5),
+  #teamsTable th:nth-child(6), #teamsTable td:nth-child(6){ display:none; }
+  /* Players table: hide ADR, Assists, Revives, DBNOs, Time */
+  #playersTable th:nth-child(4), #playersTable td:nth-child(4),
+  #playersTable th:nth-child(6), #playersTable td:nth-child(6),
+  #playersTable th:nth-child(7), #playersTable td:nth-child(7),
+  #playersTable th:nth-child(8), #playersTable td:nth-child(8),
+  #playersTable th:nth-child(9), #playersTable td:nth-child(9){ display:none; }
+  /* Slightly tighter cells */
+  table{ font-size:14px; }
+  thead th{ padding:12px 10px; }
+  tbody td{ padding:10px 10px; }
+}
+
+/* Enhance horizontal scroll for per-match chips */
+.teamcard-line{
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;
+  /* soft fade on edges */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
+}
+
+/* Snap each chip a bit */
+.teamcard-line .chip{ scroll-snap-align:start; }
+
+/* Custom horizontal scrollbar (WebKit) */
+.teamcard-line::-webkit-scrollbar{ height:8px; }
+.teamcard-line::-webkit-scrollbar-track{ background:rgba(255,255,255,.06); border-radius:999px; }
+.teamcard-line::-webkit-scrollbar-thumb{
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius:999px;
+  border:2px solid rgba(16,26,45,.9);
+  background-clip: padding-box;
+}
+
+/* Custom scrollbar for Firefox */
+.teamcard-line{ scrollbar-width: thin; scrollbar-color: var(--accent) rgba(255,255,255,.06); }
