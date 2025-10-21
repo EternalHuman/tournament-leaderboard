@@ -38,8 +38,18 @@ async function loadJSON(path) {
   const meta = window.__meta || {};
   const v = meta.version ? `?v=${encodeURIComponent(meta.version)}` : '';
   const r = await fetch(path + v);
-  if (!r.ok) throw new Error('Failed to load ' + path);
-  return r.json();
+  if (!r.ok) throw new Error('Failed to load ' + path + ` (status ${r.status})`);
+  const contentType = r.headers.get('content-type') || '';
+  const text = await r.text();
+  if (!contentType.toLowerCase().includes('application/json')) {
+    const preview = text.replace(/\s+/g, ' ').trim().slice(0, 160);
+    throw new Error(`Unexpected content-type for ${path}: ${contentType || 'unknown'}; starts with: ${preview}`);
+  }
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    throw new Error(`Invalid JSON in ${path}: ${err.message}`);
+  }
 }
 
 function setActiveTab(id) {
