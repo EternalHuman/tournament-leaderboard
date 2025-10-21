@@ -31,40 +31,63 @@
 
   <main class="main">
     <!-- Overview -->
-    <section class="card" data-panel="overview">
-      <h2>Правила и настройки</h2>
-      <div class="grid">
-        <div class="col-6">
-          <div class="card">
-            <h2>Очки за места</h2>
-            <div id="t-placements" class="placements"></div>
-          </div>
-          <div class="card">
-            <h2>Очки за действия</h2>
-            <div class="kv"><div class="k">Убийство</div><div class="v" id="t-kill"></div></div>
-          </div>
+    <section class="card card--section" data-panel="overview">
+      <div class="section-header">
+        <div>
+          <h2>Правила и настройки</h2>
+          <p class="section-subtitle">Сводка ключевых правил турнира и начисления очков.</p>
         </div>
-        <div class="col-6">
-          <div class="card">
-            <h2>Формат турнира</h2>
-            <div class="kv"><div class="k">Количество матчей</div><div class="v" id="t-matches"></div></div>
-            <hr class="sep"/>
-            <div><strong>Карты (PUBG):</strong></div>
-            <div id="t-maps" class="pills" style="margin-top:10px"></div>
-            <hr class="sep"/>
-            <div><strong>Описание:</strong></div>
-            <div id="t-desc" style="margin-top:8px"></div>
-            <hr class="sep"/>
-            <div><strong>Тай-брейк:</strong></div>
-            <div id="t-rules" style="margin-top:8px"></div>
+      </div>
+      <div class="overview-layout">
+        <article class="info-card info-card--accent overview-primary">
+          <header class="info-card__header">
+            <h3>Основная информация</h3>
+            <p>Ключевые параметры турнира и очки за действия.</p>
+          </header>
+          <div class="primary-stat-grid">
+            <div class="primary-stat">
+              <span class="primary-stat__label">Матчей</span>
+              <span class="primary-stat__value" id="t-matches"></span>
+            </div>
+            <div class="primary-stat primary-stat--action">
+              <span class="primary-stat__label">Очки за действия</span>
+              <div class="primary-stat__value">
+                <span class="primary-stat__meta">Убийство</span>
+                <span class="primary-stat__accent" id="t-kill"></span>
+              </div>
+            </div>
           </div>
-        </div>
+          <div class="info-block">
+            <span class="info-block__label">Карты</span>
+            <div id="t-maps" class="info-block__pills pills"></div>
+          </div>
+          <div class="info-block">
+            <span class="info-block__label">Описание</span>
+            <p class="info-block__text" id="t-desc"></p>
+          </div>
+          <div class="info-block">
+            <span class="info-block__label">Тай-брейк</span>
+            <div class="info-block__list" id="t-rules"></div>
+          </div>
+        </article>
+        <article class="info-card placements-card">
+          <header class="info-card__header">
+            <h3>Очки за места</h3>
+            <p>Вознаграждение за итоговую позицию в матче.</p>
+          </header>
+          <div id="t-placements" class="placements-list"></div>
+        </article>
       </div>
     </section>
 
     <!-- Teams -->
-    <section class="card" data-panel="teams" style="display:none">
-      <h2>Таблица команд</h2>
+    <section class="card card--section" data-panel="teams" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2>Таблица команд</h2>
+          <p class="section-subtitle">Полный рейтинг команд с детализацией по матчам.</p>
+        </div>
+      </div>
       <div class="table-toolbar">
         <input class="input" id="teamFilter" placeholder="Поиск по командам…"/>
         <span class="badge" id="teamCount"></span>
@@ -82,22 +105,34 @@
         </thead>
         <tbody></tbody>
       </table>
-      <div class="card" style="margin-top:16px">
-        <h2>По матчам: очки • киллы • плейсмент</h2>
+      <div class="info-card info-card--inline" style="margin-top:24px">
+        <div class="info-card__header">
+          <h3>По матчам: очки • киллы • плейсмент</h3>
+          <p>Быстрый просмотр динамики выступления каждой команды.</p>
+        </div>
         <div id="perMatch" class="pergrid"></div>
       </div>
     </section>
 
     <!-- Matches -->
-    <section class="card" data-panel="matches" style="display:none">
-      <h2>Матчи</h2>
-      <p class="muted">Сводка по каждому матчу: лидеры по очкам, киллам и плейсменту.</p>
+    <section class="card card--section" data-panel="matches" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2>Матчи</h2>
+          <p class="section-subtitle">Сводка по каждому матчу: лидеры по очкам, киллам и плейсменту.</p>
+        </div>
+      </div>
       <div id="matchesList" class="match-grid"></div>
     </section>
 
     <!-- Players -->
-    <section class="card" data-panel="players" style="display:none">
-      <h2>Статистика игроков</h2>
+    <section class="card card--section" data-panel="players" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2>Статистика игроков</h2>
+          <p class="section-subtitle">Персональные показатели и вклад в команду.</p>
+        </div>
+      </div>
       <div class="table-toolbar">
         <input class="input" id="playerFilter" placeholder="Поиск по нику или команде…"/>
         <span class="badge" id="playerCount"></span>
