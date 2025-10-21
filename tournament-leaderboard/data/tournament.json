@@ -1,0 +1,50 @@
+{
+  "title": "Autumn Cup 2025",
+  "description": "Командный турнир. Стартовая стадия — групповой этап, затем плей-офф.",
+  "scoring": {
+    "placements": [
+      {
+        "place": 1,
+        "points": 10
+      },
+      {
+        "place": 2,
+        "points": 6
+      },
+      {
+        "place": 3,
+        "points": 4
+      },
+      {
+        "place": 4,
+        "points": 3
+      },
+      {
+        "place": 5,
+        "points": 2
+      },
+      {
+        "place": 6,
+        "points": 1
+      }
+    ],
+    "killPoints": 1,
+    "revivePoints": 0.5,
+    "assistPoints": 0.25
+  },
+  "matches": {
+    "total": 6,
+    "maps": [
+      "Breeze",
+      "Ascent",
+      "Haven",
+      "Split",
+      "Lotus",
+      "Bind"
+    ]
+  },
+  "rules": [
+    "Тай-брейкеры: очки → убийства → среднее место → личная встреча.",
+    "Очки за киллы/ассисты/ревайвы суммируются к очкам за место."
+  ]
+}

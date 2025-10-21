@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Лидерборд турнира</title>
+  <meta name="description" content="Публичный лидерборд турнира: вкладки Обзор, Команды, Игроки."/>
+  <meta property="og:title" content="Лидерборд турнира"/>
+  <meta property="og:description" content="Обзор правил, таблица команд и игроков в реальном времени."/>
+  <meta property="og:type" content="website"/>
+  <link rel="stylesheet" href="assets/styles.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1 id="title">Турнир</h1>
+          <div class="updated" id="updated">Обновлено: …</div>
+        </div>
+      </div>
+      <nav class="tabs">
+        <div class="tab active" data-tab="overview">Общая информация</div>
+        <div class="tab" data-tab="teams">Команды</div>
+        <div class="tab" data-tab="players">Игроки</div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Overview -->
+    <section class="card" data-panel="overview">
+      <h2>Правила и настройки</h2>
+      <div class="grid">
+        <div class="col-6">
+          <div class="card">
+            <h2>Очки за места</h2>
+            <div id="t-placements" class="grid col-12" style="display:grid; gap:10px"></div>
+          </div>
+          <div class="card">
+            <h2>Очки за действия</h2>
+            <div class="kv"><div class="k">Убийство</div><div class="v" id="t-kill"></div></div>
+            <div class="kv" style="margin-top:10px"><div class="k">Поддержка</div><div class="v" id="t-assist"></div></div>
+            <div class="kv" style="margin-top:10px"><div class="k">Ревайв</div><div class="v" id="t-revive"></div></div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="card">
+            <h2>Формат турнира</h2>
+            <div class="kv"><div class="k">Количество матчей</div><div class="v" id="t-matches"></div></div>
+            <hr class="sep"/>
+            <div><strong>Карты:</strong></div>
+            <div id="t-maps" class="pills" style="margin-top:10px"></div>
+            <hr class="sep"/>
+            <div><strong>Описание:</strong></div>
+            <div id="t-desc" style="margin-top:8px"></div>
+            <hr class="sep"/>
+            <div><strong>Доп. правила:</strong></div>
+            <div id="t-rules" style="margin-top:8px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teams -->
+    <section class="card" data-panel="teams" style="display:none">
+      <h2>Таблица команд</h2>
+      <div class="table-toolbar">
+        <input class="input" id="teamFilter" placeholder="Поиск по командам…"/>
+        <span class="badge" id="teamCount"></span>
+      </div>
+      <table id="teamsTable">
+        <thead>
+          <tr>
+            <th class="sortable" data-key="place">#</th>
+            <th class="sortable" data-key="team">Команда</th>
+            <th class="sortable num" data-key="points">Очки</th>
+            <th class="sortable num" data-key="kills">Убийства</th>
+            <th class="sortable num" data-key="placeAvg">Сред. место</th>
+            <th class="sortable num" data-key="matches">Матчи</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="card" style="margin-top:16px">
+        <h2>Очки по матчам</h2>
+        <div id="perMatch" class="grid col-12" style="display:grid; gap:10px"></div>
+      </div>
+    </section>
+
+    <!-- Players -->
+    <section class="card" data-panel="players" style="display:none">
+      <h2>Статистика игроков</h2>
+      <div class="table-toolbar">
+        <input class="input" id="playerFilter" placeholder="Поиск по нику или команде…"/>
+        <span class="badge" id="playerCount"></span>
+      </div>
+      <table id="playersTable">
+        <thead>
+          <tr>
+            <th class="sortable" data-key="player">Игрок</th>
+            <th class="sortable" data-key="team">Команда</th>
+            <th class="sortable num" data-key="adr">ADR</th>
+            <th class="sortable num" data-key="kills">Убийства</th>
+            <th class="sortable num" data-key="assists">Поддержки</th>
+            <th class="sortable num" data-key="revives">Ревайвы</th>
+            <th class="sortable num" data-key="matches">Матчи</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <div class="footer">© Leaderboard · Статическая страница для GitHub Pages</div>
+  </main>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

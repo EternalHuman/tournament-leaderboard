@@ -1,0 +1,38 @@
+[
+  {
+    "player": "fragmaster",
+    "team": "Alpha",
+    "adr": 142.3,
+    "kills": 20,
+    "assists": 7,
+    "revives": 3,
+    "matches": 6
+  },
+  {
+    "player": "sUp",
+    "team": "Bravo",
+    "adr": 131.7,
+    "kills": 18,
+    "assists": 9,
+    "revives": 4,
+    "matches": 6
+  },
+  {
+    "player": "zeroOne",
+    "team": "Crimson",
+    "adr": 127.9,
+    "kills": 16,
+    "assists": 6,
+    "revives": 2,
+    "matches": 6
+  },
+  {
+    "player": "CarryCat",
+    "team": "Alpha",
+    "adr": 125.5,
+    "kills": 15,
+    "assists": 8,
+    "revives": 5,
+    "matches": 6
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "team": "Alpha",
+    "place": 1,
+    "points": 18,
+    "kills": 53,
+    "matches": 6,
+    "placeAvg": 2.8,
+    "perMatchPoints": [
+      6,
+      2,
+      4,
+      0,
+      4,
+      2
+    ]
+  },
+  {
+    "team": "Bravo",
+    "place": 2,
+    "points": 16,
+    "kills": 49,
+    "matches": 6,
+    "placeAvg": 3.5,
+    "perMatchPoints": [
+      4,
+      6,
+      2,
+      0,
+      2,
+      2
+    ]
+  },
+  {
+    "team": "Crimson",
+    "place": 3,
+    "points": 15,
+    "kills": 45,
+    "matches": 6,
+    "placeAvg": 3.8,
+    "perMatchPoints": [
+      0,
+      4,
+      4,
+      3,
+      2,
+      2
+    ]
+  }
+]
