@@ -224,6 +224,12 @@ async function init() {
     };
     ensureTeamStats.cache = new Map();
 
+    // Инициализируем статистику для всех команд из справочника,
+    // чтобы в таблице отображались даже те, у кого пока нет матчей.
+    teamsById.forEach(team => {
+      ensureTeamStats(team.id);
+    });
+
     const playerStats = new Map();
 
     const normalizeMatchIndex = (match, idx) => {
