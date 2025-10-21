@@ -108,7 +108,7 @@ const createPlacementResolver = placements => {
 async function loadJSON(path) {
   const meta = window.__meta || {};
   const v = meta.version ? `?v=${encodeURIComponent(meta.version)}` : '';
-  const r = await fetch(path + v, { cache: 'no-store' });
+  const r = await fetch(path + v);
   if (!r.ok) throw new Error('Failed to load ' + path + ` (status ${r.status})`);
   const contentType = r.headers.get('content-type') || '';
   const text = await r.text();
@@ -605,4 +605,4 @@ async function init() {
   }
 }
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+document.addEventListener('DOMContentLoaded', init);

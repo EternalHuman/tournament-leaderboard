@@ -195,6 +195,32 @@
     <div class="footer">© Leaderboard · by @EternalHuman</div>
   </main>
 
-  <script src="assets/app.js"></script>
+  <script>
+    (function() {
+      function appendScript(version) {
+        var s = document.createElement('script');
+        s.src = 'assets/app.js' + (version ? ('?v=' + encodeURIComponent(version)) : '');
+        s.defer = false;
+        document.body.appendChild(s);
+      }
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'data/meta.json', true);
+        xhr.setRequestHeader('Cache-Control', 'no-cache');
+        xhr.onload = function() {
+          try {
+            var meta = JSON.parse(xhr.responseText || '{}');
+            appendScript(meta && meta.version);
+          } catch (e) {
+            appendScript(null);
+          }
+        };
+        xhr.onerror = function(){ appendScript(null); };
+        xhr.send(null);
+      } catch(e) {
+        appendScript(null);
+      }
+    })();
+  </script>
 </body>
 </html>
