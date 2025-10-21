@@ -34,6 +34,18 @@ const formatPoints = (value, { signed = true } = {}) => {
 };
 const $ = sel => document.querySelector(sel);
 
+const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
+  const safe = value => (Number.isFinite(value) ? value : 0);
+  const killsScore = safe(kills) * 5;
+  const assistsScore = safe(assists) * 2;
+  const revivesScore = safe(revives) * 1.5;
+  const adrScore = safe(adr) * 0.02;
+  const timeScore = safe(timeSurvived) / 120;
+  const dbnoPenalty = safe(dbnos) * 0.7;
+  const impact = killsScore + assistsScore + revivesScore + adrScore + timeScore - dbnoPenalty;
+  return impact;
+};
+
 const normalizePlacementRanges = value => {
   const ranges = [];
   if (Array.isArray(value)) {
@@ -357,7 +369,9 @@ async function init() {
             adrSamples: 0,
             kills: 0,
             assists: 0,
-            revives: 0
+            revives: 0,
+            dbnos: 0,
+            timeSurvived: 0
           };
           playerStats.set(name, stat);
         }
@@ -374,6 +388,10 @@ async function init() {
         if (Number.isFinite(assists)) stat.assists += assists;
         const revives = toNumber(player.revives);
         if (Number.isFinite(revives)) stat.revives += revives;
+        const dbnos = toNumber(player.DBNOs ?? player.dbnos);
+        if (Number.isFinite(dbnos)) stat.dbnos += dbnos;
+        const timeSurvived = toNumber(player.timeSurvived);
+        if (Number.isFinite(timeSurvived)) stat.timeSurvived += timeSurvived;
       });
 
       return { ...match, slot };
@@ -409,21 +427,37 @@ async function init() {
     const playerRows = Array.from(playerStats.values()).map(stat => {
       const teamInfo = stat.teamId != null ? teamsById.get(stat.teamId) : null;
       const avgAdr = stat.adrSamples ? stat.adrTotal / stat.adrSamples : null;
+      const impact = computeImpact({
+        kills: stat.kills,
+        assists: stat.assists,
+        revives: stat.revives,
+        dbnos: stat.dbnos,
+        timeSurvived: stat.timeSurvived,
+        adr: avgAdr
+      });
       return {
         player: stat.player,
         team: teamInfo ? teamInfo.displayName : 'Без команды',
+        impact,
         adr: avgAdr,
         kills: stat.kills,
         assists: stat.assists,
         revives: stat.revives,
+        dbnos: stat.dbnos,
+        timeSurvived: stat.timeSurvived,
         matches: stat.matches
       };
     });
 
     playerRows.sort((a, b) => {
+      const impactDiff = (b.impact ?? -Infinity) - (a.impact ?? -Infinity);
+      if (impactDiff !== 0) return impactDiff;
+      const killsDiff = (b.kills ?? 0) - (a.kills ?? 0);
+      if (killsDiff !== 0) return killsDiff;
       const adrA = Number.isFinite(a.adr) ? a.adr : -Infinity;
       const adrB = Number.isFinite(b.adr) ? b.adr : -Infinity;
-      return adrB - adrA;
+      if (adrB !== adrA) return adrB - adrA;
+      return String(a.player ?? '').localeCompare(String(b.player ?? ''), 'ru', { sensitivity: 'base' });
     });
 
     // Teams
@@ -547,13 +581,16 @@ async function init() {
     const playerCols = [
       { key:'player',  title:'Игрок' },
       { key:'team',    title:'Команда' },
+      { key:'impact',  title:'Импакт', num:true, format:'float' },
       { key:'adr',     title:'ADR', num:true, format:'float' },
       { key:'kills',   title:'Убийства', num:true, format:'int' },
       { key:'assists', title:'Поддержки', num:true, format:'int' },
       { key:'revives', title:'Ревайвы', num:true, format:'int' },
+      { key:'dbnos',   title:'DBNOs', num:true, format:'int' },
+      { key:'timeSurvived', title:'Время (с)', num:true, format:'int' },
       { key:'matches', title:'Матчи', num:true, format:'int' },
     ];
-    sortable($('#playersTable'), playerRows, playerCols, $('#playerCount'), $('#playerFilter'), {key:'adr', dir:'desc'});
+    sortable($('#playersTable'), playerRows, playerCols, $('#playerCount'), $('#playerFilter'), {key:'impact', dir:'desc'});
 
     // tabs
     document.querySelectorAll('[data-tab]').forEach(tab => {
