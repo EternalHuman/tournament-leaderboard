@@ -1,6 +1,6 @@
 {
-  "title": "PUBG Autumn Cup 2025",
-  "description": "PUBG турнир: 33 команды, плейсмент + очки за киллы. Демо-страница.",
+  "title": "PUBG des0ut cup 2025",
+  "description": "PUBG турнир: 33 команды, плейсмент + очки за киллы.",
   "scoring": {
     "placements": [
       {
@@ -12,15 +12,27 @@
         "points": 8
       },
       {
-        "place": "3-5",
+        "place": "3",
+        "points": 7
+      },
+      {
+        "place": "4",
         "points": 6
       },
       {
-        "place": "6-8",
+        "place": "5",
+        "points": 5
+      },
+      {
+        "place": "6-7",
         "points": 4
       },
       {
-        "place": "9-12",
+        "place": "8-9",
+        "points": 3
+      },
+      {
+        "place": "10-12",
         "points": 2
       },
       {
@@ -35,16 +47,16 @@
     "killPoints": 1
   },
   "matches": {
-    "total": 6,
+    "total": 5,
     "maps": [
       "Erangel",
+      "Erangel",
       "Miramar",
-      "Sanhok",
-      "Vikendi",
-      "Taego"
+      "Miramar",
+      "Vikendi"
     ]
   },
   "rules": [
-    "Тай-брейкер: сравнение среднего места (меньше — лучше)."
+    "Тай-брейкер: сравнение среднего места."
   ]
 }
