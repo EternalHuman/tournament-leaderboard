@@ -18,6 +18,29 @@
 
   <!-- Стили -->
   <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <!-- Переопределения: перенести кредит в правый верх и уменьшить размер -->
+  <style>
+    .header__inner {
+      position: relative; /* якорь для абсолютного позиционирования */
+    }
+    .header-credit {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      font-size: 12px;      /* уменьшенный текст */
+      line-height: 1;
+      white-space: nowrap;  /* не переносить строку */
+      z-index: 10;
+    }
+    @media (max-width: 600px) {
+      .header-credit {
+        top: 8px;
+        right: 12px;
+        font-size: 11px;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="header">
