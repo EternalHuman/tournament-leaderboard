@@ -258,7 +258,11 @@ async function init() {
 
     const killPoints = tInfo?.scoring?.killPoints ?? 0;
     $('#t-kill').textContent = formatPoints(killPoints);
-    $('#t-matches').textContent = fmtNumber(matchCount || tInfo?.matches?.total || 0);
+    const plannedTotal = (Number.isFinite(totalFromInfo) && totalFromInfo > 0)
+      ? totalFromInfo
+      : Math.max(matchCount, mapsList.length);
+    const matchesSummary = `Сыграно ${fmtNumber(matchCount)} из ${fmtNumber(plannedTotal)} матчей`;
+    $('#t-matches').textContent = matchesSummary;
     const maps = mapsList;
     $('#t-maps').innerHTML = maps.length ? maps.map(m => `<span class="pill">${m}</span>`).join('') : '<span class="pill">TBD</span>';
     const rules = tInfo?.rules || [];
