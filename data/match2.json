@@ -1,1 +1,1012 @@
-
+{
+  "matchId" : 2,
+  "map" : "Miramar",
+  "date" : "2025-10-22T10:14:54Z",
+  "teams" : [ {
+    "teamId" : 29,
+    "placement" : 1,
+    "kills" : 13
+  }, {
+    "teamId" : 4,
+    "placement" : 2,
+    "kills" : 10
+  }, {
+    "teamId" : 21,
+    "placement" : 3,
+    "kills" : 15
+  }, {
+    "teamId" : 18,
+    "placement" : 4,
+    "kills" : 2
+  }, {
+    "teamId" : 26,
+    "placement" : 5,
+    "kills" : 7
+  }, {
+    "teamId" : 32,
+    "placement" : 6,
+    "kills" : 3
+  }, {
+    "teamId" : 33,
+    "placement" : 7,
+    "kills" : 7
+  }, {
+    "teamId" : 22,
+    "placement" : 8,
+    "kills" : 0
+  }, {
+    "teamId" : 30,
+    "placement" : 9,
+    "kills" : 4
+  }, {
+    "teamId" : 5,
+    "placement" : 10,
+    "kills" : 4
+  }, {
+    "teamId" : 17,
+    "placement" : 11,
+    "kills" : 0
+  }, {
+    "teamId" : 1,
+    "placement" : 12,
+    "kills" : 4
+  }, {
+    "teamId" : 24,
+    "placement" : 13,
+    "kills" : 0
+  }, {
+    "teamId" : 9,
+    "placement" : 14,
+    "kills" : 0
+  }, {
+    "teamId" : 2,
+    "placement" : 15,
+    "kills" : 2
+  }, {
+    "teamId" : 27,
+    "placement" : 16,
+    "kills" : 0
+  }, {
+    "teamId" : 8,
+    "placement" : 17,
+    "kills" : 0
+  }, {
+    "teamId" : 7,
+    "placement" : 18,
+    "kills" : 4
+  }, {
+    "teamId" : 13,
+    "placement" : 19,
+    "kills" : 1
+  }, {
+    "teamId" : 3,
+    "placement" : 20,
+    "kills" : 1
+  }, {
+    "teamId" : 23,
+    "placement" : 21,
+    "kills" : 4
+  }, {
+    "teamId" : 11,
+    "placement" : 22,
+    "kills" : 0
+  }, {
+    "teamId" : 25,
+    "placement" : 23,
+    "kills" : 2
+  }, {
+    "teamId" : 19,
+    "placement" : 24,
+    "kills" : 3
+  }, {
+    "teamId" : 28,
+    "placement" : 25,
+    "kills" : 0
+  }, {
+    "teamId" : 31,
+    "placement" : 26,
+    "kills" : 3
+  }, {
+    "teamId" : 15,
+    "placement" : 27,
+    "kills" : 4
+  }, {
+    "teamId" : 16,
+    "placement" : 28,
+    "kills" : 0
+  }, {
+    "teamId" : 6,
+    "placement" : 29,
+    "kills" : 0
+  }, {
+    "teamId" : 10,
+    "placement" : 30,
+    "kills" : 0
+  }, {
+    "teamId" : 12,
+    "placement" : 31,
+    "kills" : 0
+  }, {
+    "teamId" : 14,
+    "placement" : 32,
+    "kills" : 2
+  }, {
+    "teamId" : 20,
+    "placement" : 33,
+    "kills" : 0
+  } ],
+  "players" : [ {
+    "nickname" : "unllucki",
+    "teamId" : 1,
+    "adr" : 305.0,
+    "kills" : 3,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 589
+  }, {
+    "nickname" : "Felmix_",
+    "teamId" : 1,
+    "adr" : 417.8,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 3,
+    "timeSurvived" : 1022
+  }, {
+    "nickname" : "gsRGsDGds",
+    "teamId" : 1,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 988
+  }, {
+    "nickname" : "cr1sspy",
+    "teamId" : 2,
+    "adr" : 347.3,
+    "kills" : 2,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 1065
+  }, {
+    "nickname" : "VoV4ik94",
+    "teamId" : 2,
+    "adr" : 82.1,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1065
+  }, {
+    "nickname" : "Kri1p",
+    "teamId" : 2,
+    "adr" : 250.6,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1065
+  }, {
+    "nickname" : "Shershulya01",
+    "teamId" : 3,
+    "adr" : 185.6,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 786
+  }, {
+    "nickname" : "onlysteez1",
+    "teamId" : 3,
+    "adr" : 194.3,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 2,
+    "timeSurvived" : 786
+  }, {
+    "nickname" : "prymlan",
+    "teamId" : 3,
+    "adr" : 16.5,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 786
+  }, {
+    "nickname" : "bronn-",
+    "teamId" : 4,
+    "adr" : 1521.7,
+    "kills" : 8,
+    "assists" : 1,
+    "revives" : 0,
+    "DBNOs" : 7,
+    "timeSurvived" : 1761
+  }, {
+    "nickname" : "tyti1fryti",
+    "teamId" : 4,
+    "adr" : 355.8,
+    "kills" : 2,
+    "assists" : 1,
+    "revives" : 3,
+    "DBNOs" : 3,
+    "timeSurvived" : 1677
+  }, {
+    "nickname" : "333IEND",
+    "teamId" : 4,
+    "adr" : 202.6,
+    "kills" : 0,
+    "assists" : 1,
+    "revives" : 1,
+    "DBNOs" : 1,
+    "timeSurvived" : 1642
+  }, {
+    "nickname" : "AAz1mov",
+    "teamId" : 5,
+    "adr" : 409.5,
+    "kills" : 2,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 2,
+    "timeSurvived" : 1153
+  }, {
+    "nickname" : "sevech1108",
+    "teamId" : 5,
+    "adr" : 339.7,
+    "kills" : 2,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1175
+  }, {
+    "nickname" : "shameWDAS1",
+    "teamId" : 5,
+    "adr" : 259.3,
+    "kills" : 0,
+    "assists" : 2,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 1175
+  }, {
+    "nickname" : "OdinokayaStaruxa",
+    "teamId" : 6,
+    "adr" : 159.1,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 198
+  }, {
+    "nickname" : "PAPA_B_BUDKE",
+    "teamId" : 6,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 177
+  }, {
+    "nickname" : "coilHF",
+    "teamId" : 6,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 198
+  }, {
+    "nickname" : "AzikPlay",
+    "teamId" : 7,
+    "adr" : 172.9,
+    "kills" : 2,
+    "assists" : 1,
+    "revives" : 2,
+    "DBNOs" : 2,
+    "timeSurvived" : 948
+  }, {
+    "nickname" : "ayoko1337",
+    "teamId" : 7,
+    "adr" : 150.5,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 948
+  }, {
+    "nickname" : "RAZE90",
+    "teamId" : 7,
+    "adr" : 146.3,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 2,
+    "timeSurvived" : 948
+  }, {
+    "nickname" : "err_Aa",
+    "teamId" : 8,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 0,
+    "timeSurvived" : 1007
+  }, {
+    "nickname" : "fr_r_rt",
+    "teamId" : 8,
+    "adr" : 40.7,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1013
+  }, {
+    "nickname" : "Snaki001",
+    "teamId" : 9,
+    "adr" : 19.8,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1063
+  }, {
+    "nickname" : "Unnv1",
+    "teamId" : 9,
+    "adr" : 104.4,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 0,
+    "timeSurvived" : 1106
+  }, {
+    "nickname" : "ZXCXUESOS",
+    "teamId" : 9,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1085
+  }, {
+    "nickname" : "eNvygod-",
+    "teamId" : 10,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 143
+  }, {
+    "nickname" : "Pr1gojin_Jenya",
+    "teamId" : 10,
+    "adr" : 54.2,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 155
+  }, {
+    "nickname" : "santi_kiss",
+    "teamId" : 10,
+    "adr" : 95.2,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 142
+  }, {
+    "nickname" : "maza1406",
+    "teamId" : 11,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 716
+  }, {
+    "nickname" : "LUCiferrrr13",
+    "teamId" : 11,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 716
+  }, {
+    "nickname" : "exalius",
+    "teamId" : 11,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 716
+  }, {
+    "nickname" : "matthemgromo",
+    "teamId" : 12,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 153
+  }, {
+    "nickname" : "m1torii",
+    "teamId" : 12,
+    "adr" : 96.4,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 153
+  }, {
+    "nickname" : "krrime",
+    "teamId" : 12,
+    "adr" : 145.2,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 153
+  }, {
+    "nickname" : "nadorrrich",
+    "teamId" : 13,
+    "adr" : 121.9,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 1,
+    "timeSurvived" : 809
+  }, {
+    "nickname" : "kwarz1k",
+    "teamId" : 13,
+    "adr" : 53.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 2,
+    "DBNOs" : 0,
+    "timeSurvived" : 809
+  }, {
+    "nickname" : "55_Vo1D",
+    "teamId" : 13,
+    "adr" : 122.8,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 2,
+    "timeSurvived" : 809
+  }, {
+    "nickname" : "Z3K1CH",
+    "teamId" : 14,
+    "adr" : 200.0,
+    "kills" : 2,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 127
+  }, {
+    "nickname" : "razzi89",
+    "teamId" : 14,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 127
+  }, {
+    "nickname" : "Albertyulin",
+    "teamId" : 14,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 127
+  }, {
+    "nickname" : "boec_cc",
+    "teamId" : 15,
+    "adr" : 307.1,
+    "kills" : 3,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 3,
+    "timeSurvived" : 366
+  }, {
+    "nickname" : "Dismora1",
+    "teamId" : 15,
+    "adr" : 197.2,
+    "kills" : 1,
+    "assists" : 1,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 366
+  }, {
+    "nickname" : "SssprayZzz",
+    "teamId" : 15,
+    "adr" : 38.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 219
+  }, {
+    "nickname" : "SiRiYsBlack",
+    "teamId" : 16,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 329
+  }, {
+    "nickname" : "joestarique",
+    "teamId" : 16,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 329
+  }, {
+    "nickname" : "West1q",
+    "teamId" : 17,
+    "adr" : 23.8,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1175
+  }, {
+    "nickname" : "Gromxxxxz",
+    "teamId" : 17,
+    "adr" : 67.8,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1173
+  }, {
+    "nickname" : "Ereke_1996",
+    "teamId" : 17,
+    "adr" : 118.7,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1175
+  }, {
+    "nickname" : "Kepchines73",
+    "teamId" : 18,
+    "adr" : 510.7,
+    "kills" : 2,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1458
+  }, {
+    "nickname" : "veteranscounci1",
+    "teamId" : 18,
+    "adr" : 194.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 0,
+    "timeSurvived" : 1458
+  }, {
+    "nickname" : "R_O_K_E_T_A",
+    "teamId" : 18,
+    "adr" : 258.6,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1458
+  }, {
+    "nickname" : "FiveSkill",
+    "teamId" : 19,
+    "adr" : 129.1,
+    "kills" : 1,
+    "assists" : 1,
+    "revives" : 2,
+    "DBNOs" : 1,
+    "timeSurvived" : 168
+  }, {
+    "nickname" : "ave_kacper",
+    "teamId" : 19,
+    "adr" : 225.0,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 203
+  }, {
+    "nickname" : "vodkaskndr",
+    "teamId" : 19,
+    "adr" : 214.3,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 511
+  }, {
+    "nickname" : "chiz4sc4s",
+    "teamId" : 20,
+    "adr" : 43.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 109
+  }, {
+    "nickname" : "tossh1-",
+    "teamId" : 20,
+    "adr" : 90.7,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 109
+  }, {
+    "nickname" : "Be3DaPb",
+    "teamId" : 20,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 109
+  }, {
+    "nickname" : "2XCOTbIu",
+    "teamId" : 21,
+    "adr" : 1183.6,
+    "kills" : 6,
+    "assists" : 3,
+    "revives" : 0,
+    "DBNOs" : 5,
+    "timeSurvived" : 1640
+  }, {
+    "nickname" : "KURTRASSELL",
+    "teamId" : 21,
+    "adr" : 660.7,
+    "kills" : 5,
+    "assists" : 0,
+    "revives" : 2,
+    "DBNOs" : 4,
+    "timeSurvived" : 1658
+  }, {
+    "nickname" : "hawkez0",
+    "teamId" : 21,
+    "adr" : 384.4,
+    "kills" : 4,
+    "assists" : 1,
+    "revives" : 6,
+    "DBNOs" : 2,
+    "timeSurvived" : 1641
+  }, {
+    "nickname" : "xBlackrainboWx",
+    "teamId" : 22,
+    "adr" : 441.7,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 1284
+  }, {
+    "nickname" : "DurexExtraLarge",
+    "teamId" : 22,
+    "adr" : 114.5,
+    "kills" : 0,
+    "assists" : 1,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1300
+  }, {
+    "nickname" : "BobCheese7",
+    "teamId" : 22,
+    "adr" : 219.4,
+    "kills" : 0,
+    "assists" : 2,
+    "revives" : 0,
+    "DBNOs" : 3,
+    "timeSurvived" : 1304
+  }, {
+    "nickname" : "hellwellhard",
+    "teamId" : 23,
+    "adr" : 599.0,
+    "kills" : 3,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 7,
+    "timeSurvived" : 729
+  }, {
+    "nickname" : "KardenidzA",
+    "teamId" : 23,
+    "adr" : 100.0,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 698
+  }, {
+    "nickname" : "stikas_",
+    "teamId" : 23,
+    "adr" : 42.6,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 452
+  }, {
+    "nickname" : "ADMIN_DXB",
+    "teamId" : 24,
+    "adr" : 296.5,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1111
+  }, {
+    "nickname" : "Fed0000S",
+    "teamId" : 24,
+    "adr" : 450.7,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 2,
+    "timeSurvived" : 1105
+  }, {
+    "nickname" : "POWERSLIDE",
+    "teamId" : 24,
+    "adr" : 310.6,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 3,
+    "DBNOs" : 0,
+    "timeSurvived" : 1111
+  }, {
+    "nickname" : "2rikk",
+    "teamId" : 25,
+    "adr" : 27.3,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 571
+  }, {
+    "nickname" : "xcrystalxx",
+    "teamId" : 25,
+    "adr" : 181.3,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 528
+  }, {
+    "nickname" : "Fashiondemon-",
+    "teamId" : 25,
+    "adr" : 520.8,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 3,
+    "timeSurvived" : 501
+  }, {
+    "nickname" : "SlavaMozhet",
+    "teamId" : 26,
+    "adr" : 270.5,
+    "kills" : 3,
+    "assists" : 2,
+    "revives" : 2,
+    "DBNOs" : 1,
+    "timeSurvived" : 1236
+  }, {
+    "nickname" : "Repty23",
+    "teamId" : 26,
+    "adr" : 307.5,
+    "kills" : 2,
+    "assists" : 1,
+    "revives" : 1,
+    "DBNOs" : 2,
+    "timeSurvived" : 1297
+  }, {
+    "nickname" : "sm1le23xd",
+    "teamId" : 26,
+    "adr" : 391.5,
+    "kills" : 2,
+    "assists" : 1,
+    "revives" : 3,
+    "DBNOs" : 3,
+    "timeSurvived" : 1349
+  }, {
+    "nickname" : "sqwiseeegoist",
+    "teamId" : 27,
+    "adr" : 80.2,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 164
+  }, {
+    "nickname" : "Dresc0ut",
+    "teamId" : 27,
+    "adr" : 44.5,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 825
+  }, {
+    "nickname" : "6usinesswoman",
+    "teamId" : 27,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1019
+  }, {
+    "nickname" : "Todaroku",
+    "teamId" : 28,
+    "adr" : 198.7,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 228
+  }, {
+    "nickname" : "ANZOR4K",
+    "teamId" : 28,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 316
+  }, {
+    "nickname" : "ameqv",
+    "teamId" : 28,
+    "adr" : 79.2,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 446
+  }, {
+    "nickname" : "GodPick",
+    "teamId" : 29,
+    "adr" : 731.7,
+    "kills" : 5,
+    "assists" : 2,
+    "revives" : 2,
+    "DBNOs" : 3,
+    "timeSurvived" : 1764
+  }, {
+    "nickname" : "FluFFYmaH",
+    "teamId" : 29,
+    "adr" : 934.3,
+    "kills" : 5,
+    "assists" : 2,
+    "revives" : 0,
+    "DBNOs" : 5,
+    "timeSurvived" : 1764
+  }, {
+    "nickname" : "marklinck",
+    "teamId" : 29,
+    "adr" : 487.3,
+    "kills" : 3,
+    "assists" : 1,
+    "revives" : 1,
+    "DBNOs" : 1,
+    "timeSurvived" : 1764
+  }, {
+    "nickname" : "timjkeetima",
+    "teamId" : 30,
+    "adr" : 442.1,
+    "kills" : 3,
+    "assists" : 1,
+    "revives" : 2,
+    "DBNOs" : 2,
+    "timeSurvived" : 1092
+  }, {
+    "nickname" : "4udovish4e228322",
+    "teamId" : 30,
+    "adr" : 202.9,
+    "kills" : 1,
+    "assists" : 1,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1041
+  }, {
+    "nickname" : "1Pushok1",
+    "teamId" : 30,
+    "adr" : 95.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 1,
+    "timeSurvived" : 939
+  }, {
+    "nickname" : "wasborntolose",
+    "teamId" : 31,
+    "adr" : 274.4,
+    "kills" : 3,
+    "assists" : 0,
+    "revives" : 1,
+    "DBNOs" : 3,
+    "timeSurvived" : 395
+  }, {
+    "nickname" : "NerYahA-TT",
+    "teamId" : 31,
+    "adr" : 0.0,
+    "kills" : 0,
+    "assists" : 1,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 395
+  }, {
+    "nickname" : "fightingmydem0ns",
+    "teamId" : 31,
+    "adr" : 266.5,
+    "kills" : 0,
+    "assists" : 2,
+    "revives" : 2,
+    "DBNOs" : 1,
+    "timeSurvived" : 395
+  }, {
+    "nickname" : "bober2280071337",
+    "teamId" : 32,
+    "adr" : 319.6,
+    "kills" : 2,
+    "assists" : 1,
+    "revives" : 1,
+    "DBNOs" : 1,
+    "timeSurvived" : 1357
+  }, {
+    "nickname" : "Mekyumaru",
+    "teamId" : 32,
+    "adr" : 340.7,
+    "kills" : 1,
+    "assists" : 1,
+    "revives" : 0,
+    "DBNOs" : 1,
+    "timeSurvived" : 1357
+  }, {
+    "nickname" : "wwwwwshq",
+    "teamId" : 32,
+    "adr" : 143.9,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1007
+  }, {
+    "nickname" : "Wersone_shaka",
+    "teamId" : 33,
+    "adr" : 345.4,
+    "kills" : 6,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 3,
+    "timeSurvived" : 1352
+  }, {
+    "nickname" : "TheGlaceon",
+    "teamId" : 33,
+    "adr" : 0.0,
+    "kills" : 1,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1073
+  }, {
+    "nickname" : "Gast911",
+    "teamId" : 33,
+    "adr" : 81.0,
+    "kills" : 0,
+    "assists" : 0,
+    "revives" : 0,
+    "DBNOs" : 0,
+    "timeSurvived" : 1136
+  } ]
+}
