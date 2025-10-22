@@ -11,7 +11,6 @@
   --border-soft:rgba(130,160,210,.1);
   --warn:#F59E0B;
   --bad:#EF4444;
-  --table-header-offset:0px;
 }
 *{box-sizing:border-box}
 html,body{min-height:100%}
@@ -198,8 +197,6 @@ thead th{position:sticky; top:0; background:rgba(15,24,41,.9); text-align:left; 
 tbody td{padding:12px 16px; border-bottom:1px solid rgba(122,167,255,.08); font-size:15px}
 tbody tr:hover{background:rgba(20,34,58,.6)}
 th.sortable{cursor:pointer; user-select:none}
-.table-wrap--stuck thead th{top:var(--table-header-offset); box-shadow:0 10px 24px rgba(10,16,27,.45)}
-.table-sticky-sentinel{position:relative; width:100%; height:0; margin:0; padding:0; pointer-events:none}
 th.sortable:after{content:" ⇅"; color:var(--muted); font-weight:400}
 th.sortable[data-dir="asc"]:after{content:" ↑"}
 th.sortable[data-dir="desc"]:after{content:" ↓"}
