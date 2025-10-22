@@ -44,6 +44,13 @@ const pluralizeRu = (value, forms) => {
 };
 const $ = sel => document.querySelector(sel);
 
+function updateStickyTableOffset() {
+  const header = document.querySelector('.header');
+  const gap = 12;
+  const offset = header ? Math.ceil(header.getBoundingClientRect().height + gap) : gap;
+  document.documentElement.style.setProperty('--table-sticky-offset', `${Math.max(offset, 0)}px`);
+}
+
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
   const killsScore = safe(kills) * 5;
@@ -149,6 +156,8 @@ function setActiveTab(id, options) {
   if (!alreadyActive && opts.scroll !== false) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  updateStickyTableOffset();
 }
 
 function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
@@ -864,6 +873,11 @@ async function init() {
     });
     const initial = location.hash?.replace('#','') || 'overview';
     setActiveTab(initial, { scroll: false });
+
+    updateStickyTableOffset();
+    window.addEventListener('resize', updateStickyTableOffset);
+    window.addEventListener('orientationchange', updateStickyTableOffset);
+    window.addEventListener('load', updateStickyTableOffset);
 
   } catch (e) {
     console.error(e);
