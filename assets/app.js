@@ -123,7 +123,11 @@ async function loadJSON(path) {
   }
 }
 
-function setActiveTab(id) {
+function setActiveTab(id, options) {
+  const opts = options || {};
+  const currentActive = document.querySelector('[data-tab].active');
+  const alreadyActive = currentActive ? currentActive.dataset.tab === id : false;
+
   document.querySelectorAll('[data-tab]').forEach(el => {
     el.classList.toggle('active', el.dataset.tab === id);
   });
@@ -131,6 +135,10 @@ function setActiveTab(id) {
     el.style.display = (el.dataset.panel === id) ? 'block' : 'none';
   });
   location.hash = id;
+
+  if (!alreadyActive && opts.scroll !== false) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
@@ -594,10 +602,10 @@ async function init() {
 
     // tabs
     document.querySelectorAll('[data-tab]').forEach(tab => {
-      tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
+      tab.addEventListener('click', () => setActiveTab(tab.dataset.tab, { scroll: true }));
     });
     const initial = location.hash?.replace('#','') || 'overview';
-    setActiveTab(initial);
+    setActiveTab(initial, { scroll: false });
 
   } catch (e) {
     console.error(e);
