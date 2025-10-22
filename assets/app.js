@@ -32,7 +32,24 @@ const formatPoints = (value, { signed = true } = {}) => {
   const suffix = pluralizePoints(num);
   return `${signChar}${formatted} ${suffix}`;
 };
+const pluralizeRu = (value, forms) => {
+  if (!Array.isArray(forms) || forms.length < 3) return '';
+  const [one, few, many] = forms;
+  const num = Math.abs(Math.trunc(Number.isFinite(value) ? value : 0));
+  const mod10 = num % 10;
+  const mod100 = num % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+};
 const $ = sel => document.querySelector(sel);
+
+function updateStickyTableOffset() {
+  const header = document.querySelector('.header');
+  const gap = 12;
+  const offset = header ? Math.ceil(header.getBoundingClientRect().height + gap) : gap;
+  document.documentElement.style.setProperty('--table-sticky-offset', `${Math.max(offset, 0)}px`);
+}
 
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
@@ -123,7 +140,11 @@ async function loadJSON(path) {
   }
 }
 
-function setActiveTab(id) {
+function setActiveTab(id, options) {
+  const opts = options || {};
+  const currentActive = document.querySelector('[data-tab].active');
+  const alreadyActive = currentActive ? currentActive.dataset.tab === id : false;
+
   document.querySelectorAll('[data-tab]').forEach(el => {
     el.classList.toggle('active', el.dataset.tab === id);
   });
@@ -131,6 +152,12 @@ function setActiveTab(id) {
     el.style.display = (el.dataset.panel === id) ? 'block' : 'none';
   });
   location.hash = id;
+
+  if (!alreadyActive && opts.scroll !== false) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  updateStickyTableOffset();
 }
 
 function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
@@ -198,6 +225,18 @@ async function init() {
       loadJSON('data/teams.json')
     ]);
 
+    const statusEls = {
+      card: $('#statusCard'),
+      state: $('#statusState'),
+      message: $('#statusMessage'),
+      countdown: $('#statusCountdown'),
+      podium: $('#statusPodium')
+    };
+    const startTimeRaw = tInfo?.startTime;
+    const startDate = startTimeRaw ? new Date(startTimeRaw) : null;
+    const hasValidStart = startDate instanceof Date && !Number.isNaN(startDate.getTime());
+    let countdownTimer = null;
+
     const killPoint = toNumber(tInfo?.scoring?.killPoints ?? 0) || 0;
     const resolvePlacementPoints = createPlacementResolver(tInfo?.scoring?.placements);
     const totalFromInfo = Number(tInfo?.matches?.total) || 0;
@@ -215,8 +254,9 @@ async function init() {
 
     const matchPromises = [];
     const mapsList = Array.isArray(tInfo?.matches?.maps) ? tInfo.matches.maps : [];
-    const plannedMatches = totalFromInfo || mapsList.length;
-    const attempts = Math.max(plannedMatches, 1);
+    const expectedMatchesCount = totalFromInfo > 0 ? totalFromInfo : (mapsList.length > 0 ? mapsList.length : null);
+    const plannedMatches = expectedMatchesCount ?? mapsList.length;
+    const attempts = Math.max(plannedMatches || 0, 1);
     for (let i = 1; i <= attempts; i += 1) {
       matchPromises.push(
         loadJSON(`data/match${i}.json`).then(data => ({ ...data, __index: i }))
@@ -270,9 +310,7 @@ async function init() {
 
     const killPoints = tInfo?.scoring?.killPoints ?? 0;
     $('#t-kill').textContent = formatPoints(killPoints);
-    const plannedTotal = (Number.isFinite(totalFromInfo) && totalFromInfo > 0)
-      ? totalFromInfo
-      : Math.max(matchCount, mapsList.length);
+    const plannedTotal = expectedMatchesCount ?? Math.max(matchCount, mapsList.length);
     const matchesSummary = `Сыграно ${fmtNumber(matchCount)} из ${fmtNumber(plannedTotal)} матчей`;
     $('#t-matches').textContent = matchesSummary;
     const maps = mapsList;
@@ -415,14 +453,140 @@ async function init() {
     teamRows.sort((a, b) => {
       const diffPoints = (b.points ?? 0) - (a.points ?? 0);
       if (diffPoints !== 0) return diffPoints;
-      const diffKills = (b.kills ?? 0) - (a.kills ?? 0);
-      if (diffKills !== 0) return diffKills;
       const avgA = Number.isFinite(a.placeAvg) ? a.placeAvg : Infinity;
       const avgB = Number.isFinite(b.placeAvg) ? b.placeAvg : Infinity;
       if (avgA !== avgB) return avgA - avgB;
+      const diffKills = (b.kills ?? 0) - (a.kills ?? 0);
+      if (diffKills !== 0) return diffKills;
       return (a.id ?? 0) - (b.id ?? 0);
     });
     teamRows.forEach((row, idx) => { row.place = idx + 1; });
+
+    const renderCountdown = remainingMs => {
+      if (!statusEls?.countdown) return;
+      const totalSeconds = Math.max(Math.floor(remainingMs / 1000), 0);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const segments = [
+        { value: days, forms: ['день', 'дня', 'дней'], pad: days < 100 ? 2 : String(days).length },
+        { value: hours, forms: ['час', 'часа', 'часов'], pad: 2 },
+        { value: minutes, forms: ['минута', 'минуты', 'минут'], pad: 2 },
+        { value: seconds, forms: ['секунда', 'секунды', 'секунд'], pad: 2 }
+      ];
+      statusEls.countdown.innerHTML = segments.map(segment => {
+        const label = pluralizeRu(segment.value, segment.forms);
+        const value = segment.pad ? String(segment.value).padStart(segment.pad, '0') : String(segment.value);
+        return `
+          <div class="status-countdown__item">
+            <span class="status-countdown__value">${value}</span>
+            <span class="status-countdown__label">${label}</span>
+          </div>
+        `;
+      }).join('');
+    };
+
+    const renderPodium = winners => {
+      if (!statusEls?.podium) return;
+      const slots = [
+        { place: 2, modifier: 'second', data: winners[1] },
+        { place: 1, modifier: 'first', data: winners[0] },
+        { place: 3, modifier: 'third', data: winners[2] }
+      ].filter(slot => slot.data);
+      if (!slots.length) {
+        statusEls.podium.innerHTML = '';
+        statusEls.podium.hidden = true;
+        return;
+      }
+      statusEls.podium.innerHTML = slots.map(slot => {
+        const row = slot.data;
+        const teamInfo = teamsById.get(row.id);
+        const teamName = teamInfo?.name || teamInfo?.displayName || row.team || `Команда ${fmtNumber(row.id)}`;
+        const pointsValue = Number.isFinite(toNumber(row.points)) ? fmtNumber(toNumber(row.points)) : null;
+        const pointsText = pointsValue != null ? `${pointsValue} очков` : '';
+        return `
+          <div class="status-podium__slot status-podium__slot--${slot.modifier}">
+            <div class="status-podium__block">
+              <div class="status-podium__place">${slot.place}</div>
+              <div class="status-podium__team">${teamName}</div>
+              ${pointsText ? `<div class="status-podium__points">${pointsText}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+      statusEls.podium.hidden = false;
+    };
+
+    const updateStatusCard = () => {
+      if (!statusEls?.card) return;
+      const now = new Date();
+      const beforeStart = hasValidStart && now < startDate;
+      const winners = teamRows.filter(row => (row.matches ?? 0) > 0 || (row.points ?? 0) !== 0).slice(0, 3);
+      const hasResults = matchCount > 0 && winners.length > 0;
+      const allMatchesPlayed = (expectedMatchesCount != null && expectedMatchesCount > 0)
+        ? matchCount >= expectedMatchesCount
+        : false;
+
+      if (beforeStart) {
+        statusEls.state && (statusEls.state.textContent = 'Турнир ещё не начался');
+        statusEls.message && (statusEls.message.textContent = 'До начала турнира осталось:');
+        if (statusEls.countdown) {
+          statusEls.countdown.hidden = false;
+          renderCountdown(startDate.getTime() - now.getTime());
+        }
+        if (statusEls.podium) {
+          statusEls.podium.hidden = true;
+          statusEls.podium.innerHTML = '';
+        }
+        return;
+      }
+
+      if (statusEls.countdown) {
+        statusEls.countdown.hidden = true;
+        statusEls.countdown.innerHTML = '';
+      }
+
+      if (allMatchesPlayed && hasResults) {
+        statusEls.state && (statusEls.state.textContent = 'Турнир завершён');
+        statusEls.message && (statusEls.message.textContent = winners.length >= 3
+          ? 'Поздравляем призёров турнира:'
+          : 'Итоги турнира: призовые места');
+        renderPodium(winners);
+        return;
+      }
+
+      if ((hasValidStart && now >= startDate) || hasResults) {
+        statusEls.state && (statusEls.state.textContent = 'Турнир в процессе');
+        statusEls.message && (statusEls.message.textContent = 'Турнир начался, ожидание результатов...');
+        if (statusEls.podium) {
+          statusEls.podium.hidden = true;
+          statusEls.podium.innerHTML = '';
+        }
+        return;
+      }
+
+      statusEls.state && (statusEls.state.textContent = 'Статус турнира');
+      statusEls.message && (statusEls.message.textContent = 'Информация будет обновлена по мере появления данных.');
+      if (statusEls.podium) {
+        statusEls.podium.hidden = true;
+        statusEls.podium.innerHTML = '';
+      }
+    };
+
+    updateStatusCard();
+    if (hasValidStart && statusEls?.card) {
+      const tick = () => {
+        updateStatusCard();
+        if (new Date() >= startDate && countdownTimer) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+      };
+      if (new Date() < startDate) {
+        countdownTimer = setInterval(tick, 1000);
+      }
+    }
 
     const playerRows = Array.from(playerStats.values()).map(stat => {
       const teamInfo = stat.teamId != null ? teamsById.get(stat.teamId) : null;
@@ -575,16 +739,127 @@ async function init() {
         matchesEl.innerHTML = matchCards.join('');
       }
     }
-    sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'points', dir:'desc'});
+    sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'place', dir:'asc'});
+
+    const infoIcons = Array.from(document.querySelectorAll('.info-icon'));
+    if (infoIcons.length) {
+      const tooltip = document.createElement('div');
+      tooltip.className = 'info-tooltip';
+      tooltip.setAttribute('role', 'tooltip');
+      tooltip.style.display = 'none';
+      document.body.appendChild(tooltip);
+
+      let activeIcon = null;
+
+      const hideTooltip = () => {
+        if (!activeIcon) return;
+        activeIcon.setAttribute('aria-expanded', 'false');
+        activeIcon = null;
+        tooltip.classList.remove('info-tooltip--visible');
+        tooltip.style.display = 'none';
+        tooltip.textContent = '';
+      };
+
+      const positionTooltip = icon => {
+        const rect = icon.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const viewportWidth = document.documentElement.clientWidth;
+        const scrollX = window.pageXOffset || document.documentElement.scrollLeft || 0;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        let left = rect.left + scrollX + rect.width / 2 - tooltipRect.width / 2;
+        const minLeft = scrollX + 8;
+        const maxLeft = scrollX + viewportWidth - tooltipRect.width - 8;
+        if (left < minLeft) left = minLeft;
+        if (left > maxLeft) left = Math.max(minLeft, maxLeft);
+        const top = rect.bottom + scrollY + 10;
+        tooltip.style.left = `${Math.round(left)}px`;
+        tooltip.style.top = `${Math.round(top)}px`;
+      };
+
+      const showTooltip = icon => {
+        const text = icon.dataset.tooltip || icon.getAttribute('title') || icon.getAttribute('aria-label');
+        if (!text) return;
+        if (activeIcon === icon) {
+          hideTooltip();
+          return;
+        }
+        if (activeIcon) {
+          activeIcon.setAttribute('aria-expanded', 'false');
+        }
+        activeIcon = icon;
+        tooltip.textContent = text;
+        tooltip.style.display = 'block';
+        tooltip.classList.remove('info-tooltip--visible');
+        requestAnimationFrame(() => {
+          positionTooltip(icon);
+          tooltip.classList.add('info-tooltip--visible');
+          icon.setAttribute('aria-expanded', 'true');
+        });
+      };
+
+      infoIcons.forEach(icon => {
+        if (!icon.dataset.tooltip && icon.getAttribute('title')) {
+          icon.dataset.tooltip = icon.getAttribute('title');
+        }
+        icon.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          showTooltip(icon);
+        });
+        icon.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            showTooltip(icon);
+          }
+        });
+        icon.addEventListener('blur', () => {
+          setTimeout(() => {
+            if (activeIcon === icon && document.activeElement !== icon) {
+              hideTooltip();
+            }
+          }, 10);
+        });
+      });
+
+      document.addEventListener('click', e => {
+        if (!activeIcon) return;
+        if (!tooltip.contains(e.target) && e.target !== activeIcon) {
+          hideTooltip();
+        }
+      });
+
+      document.addEventListener('keydown', e => {
+        if (!activeIcon) return;
+        if (e.key === 'Escape' || e.key === 'Esc') {
+          hideTooltip();
+        }
+      });
+
+      window.addEventListener('scroll', () => {
+        if (!activeIcon) return;
+        hideTooltip();
+      }, true);
+
+      window.addEventListener('resize', () => {
+        if (!activeIcon) return;
+        tooltip.classList.remove('info-tooltip--visible');
+        requestAnimationFrame(() => {
+          if (!activeIcon) return;
+          positionTooltip(activeIcon);
+          tooltip.classList.add('info-tooltip--visible');
+        });
+      });
+    }
 
     // Players
     const playerCols = [
+      { key:'impact',  title:'Импакт', num:true, format:'float' },
       { key:'player',  title:'Игрок' },
       { key:'team',    title:'Команда' },
-      { key:'impact',  title:'Импакт', num:true, format:'float' },
-      { key:'adr',     title:'ADR', num:true, format:'float' },
       { key:'kills',   title:'Убийства', num:true, format:'int' },
-      { key:'assists', title:'Поддержки', num:true, format:'int' },
+      { key:'adr',     title:'ADR', num:true, format:'float' },
+      { key:'assists', title:'Помощь', num:true, format:'int' },
       { key:'revives', title:'Ревайвы', num:true, format:'int' },
       { key:'dbnos',   title:'DBNOs', num:true, format:'int' },
       { key:'timeSurvived', title:'Время (с)', num:true, format:'int' },
@@ -594,10 +869,15 @@ async function init() {
 
     // tabs
     document.querySelectorAll('[data-tab]').forEach(tab => {
-      tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
+      tab.addEventListener('click', () => setActiveTab(tab.dataset.tab, { scroll: true }));
     });
     const initial = location.hash?.replace('#','') || 'overview';
-    setActiveTab(initial);
+    setActiveTab(initial, { scroll: false });
+
+    updateStickyTableOffset();
+    window.addEventListener('resize', updateStickyTableOffset);
+    window.addEventListener('orientationchange', updateStickyTableOffset);
+    window.addEventListener('load', updateStickyTableOffset);
 
   } catch (e) {
     console.error(e);

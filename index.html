@@ -57,7 +57,7 @@
       </div>
       <a class="header-credit" href="https://t.me/EternalHuman" target="_blank" rel="noopener noreferrer">by @EternalHuman</a>
       <nav class="tabs">
-        <div class="tab active" data-tab="overview">Информация</div>
+        <div class="tab active" data-tab="overview">Турнир</div>
         <div class="tab" data-tab="teams">Команды</div>
         <div class="tab" data-tab="matches">Матчи</div>
         <div class="tab" data-tab="players">Игроки</div>
@@ -68,6 +68,17 @@
   <main class="main">
     <!-- Overview -->
     <section class="card card--section" data-panel="overview">
+      <article class="info-card info-card--accent status-card" id="statusCard">
+        <header class="info-card__header status-card__header">
+          <h3>Статус</h3>
+          <span class="status-card__state" id="statusState">Обновление…</span>
+        </header>
+        <div class="status-card__body">
+          <div class="status-message" id="statusMessage">Загрузка статуса турнира…</div>
+          <div class="status-countdown" id="statusCountdown" aria-live="polite" aria-atomic="true"></div>
+          <div class="status-podium" id="statusPodium" hidden></div>
+        </div>
+      </article>
       <div class="section-header">
         <div>
           <h2>Правила и настройки</h2>
@@ -176,15 +187,23 @@
       <div class="table-wrap"><table id="playersTable">
         <thead>
           <tr>
+            <th class="sortable num" data-key="impact">Импакт</th>
             <th class="sortable" data-key="player">Игрок</th>
             <th class="sortable" data-key="team">Команда</th>
-            <th class="sortable num" data-key="impact">Импакт</th>
-            <th class="sortable num" data-key="adr">ADR</th>
             <th class="sortable num" data-key="kills">Убийства</th>
-            <th class="sortable num" data-key="assists">Поддержки</th>
+            <th class="sortable num" data-key="adr">ADR</th>
+            <th class="sortable num" data-key="assists">Помощь</th>
             <th class="sortable num" data-key="revives">Ревайвы</th>
-            <th class="sortable num" data-key="dbnos">DBNOs</th>
-            <th class="sortable num" data-key="timeSurvived">Время (с)</th>
+            <th class="sortable num" data-key="dbnos">
+              <span class="th-label">DBNOs
+                <button type="button" class="info-icon" title="Упал, но не умер" aria-label="Упал, но не умер" aria-expanded="false" aria-haspopup="true">i</button>
+              </span>
+            </th>
+            <th class="sortable num" data-key="timeSurvived">
+              <span class="th-label">Время (с)
+                <button type="button" class="info-icon" title="Время жизни" aria-label="Время жизни" aria-expanded="false" aria-haspopup="true">i</button>
+              </span>
+            </th>
             <th class="sortable num" data-key="matches">Матчи</th>
           </tr>
         </thead>
