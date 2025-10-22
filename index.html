@@ -187,15 +187,23 @@
       <div class="table-wrap"><table id="playersTable">
         <thead>
           <tr>
+            <th class="sortable num" data-key="impact">Импакт</th>
             <th class="sortable" data-key="player">Игрок</th>
             <th class="sortable" data-key="team">Команда</th>
-            <th class="sortable num" data-key="impact">Импакт</th>
-            <th class="sortable num" data-key="adr">ADR</th>
             <th class="sortable num" data-key="kills">Убийства</th>
-            <th class="sortable num" data-key="assists">Поддержки</th>
+            <th class="sortable num" data-key="adr">ADR</th>
+            <th class="sortable num" data-key="assists">Помощь</th>
             <th class="sortable num" data-key="revives">Ревайвы</th>
-            <th class="sortable num" data-key="dbnos"><span class="th-label">DBNOs<span class="info-icon" title="Упал, но не умер" aria-label="Упал, но не умер" tabindex="0">i</span></span></th>
-            <th class="sortable num" data-key="timeSurvived"><span class="th-label">Время (с)<span class="info-icon" title="Время жизни" aria-label="Время жизни" tabindex="0">i</span></span></th>
+            <th class="sortable num" data-key="dbnos">
+              <span class="th-label">DBNOs
+                <button type="button" class="info-icon" title="Упал, но не умер" aria-label="Упал, но не умер" aria-expanded="false" aria-haspopup="true">i</button>
+              </span>
+            </th>
+            <th class="sortable num" data-key="timeSurvived">
+              <span class="th-label">Время (с)
+                <button type="button" class="info-icon" title="Время жизни" aria-label="Время жизни" aria-expanded="false" aria-haspopup="true">i</button>
+              </span>
+            </th>
             <th class="sortable num" data-key="matches">Матчи</th>
           </tr>
         </thead>

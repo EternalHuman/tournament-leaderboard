@@ -732,27 +732,125 @@ async function init() {
     }
     sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'place', dir:'asc'});
 
-    document.querySelectorAll('.info-icon').forEach(icon => {
-      icon.addEventListener('click', e => {
-        e.preventDefault();
-        e.stopPropagation();
-      });
-      icon.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
+    const infoIcons = Array.from(document.querySelectorAll('.info-icon'));
+    if (infoIcons.length) {
+      const tooltip = document.createElement('div');
+      tooltip.className = 'info-tooltip';
+      tooltip.setAttribute('role', 'tooltip');
+      tooltip.style.display = 'none';
+      document.body.appendChild(tooltip);
+
+      let activeIcon = null;
+
+      const hideTooltip = () => {
+        if (!activeIcon) return;
+        activeIcon.setAttribute('aria-expanded', 'false');
+        activeIcon = null;
+        tooltip.classList.remove('info-tooltip--visible');
+        tooltip.style.display = 'none';
+        tooltip.textContent = '';
+      };
+
+      const positionTooltip = icon => {
+        const rect = icon.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const viewportWidth = document.documentElement.clientWidth;
+        const scrollX = window.pageXOffset || document.documentElement.scrollLeft || 0;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        let left = rect.left + scrollX + rect.width / 2 - tooltipRect.width / 2;
+        const minLeft = scrollX + 8;
+        const maxLeft = scrollX + viewportWidth - tooltipRect.width - 8;
+        if (left < minLeft) left = minLeft;
+        if (left > maxLeft) left = Math.max(minLeft, maxLeft);
+        const top = rect.bottom + scrollY + 10;
+        tooltip.style.left = `${Math.round(left)}px`;
+        tooltip.style.top = `${Math.round(top)}px`;
+      };
+
+      const showTooltip = icon => {
+        const text = icon.dataset.tooltip || icon.getAttribute('title') || icon.getAttribute('aria-label');
+        if (!text) return;
+        if (activeIcon === icon) {
+          hideTooltip();
+          return;
+        }
+        if (activeIcon) {
+          activeIcon.setAttribute('aria-expanded', 'false');
+        }
+        activeIcon = icon;
+        tooltip.textContent = text;
+        tooltip.style.display = 'block';
+        tooltip.classList.remove('info-tooltip--visible');
+        requestAnimationFrame(() => {
+          positionTooltip(icon);
+          tooltip.classList.add('info-tooltip--visible');
+          icon.setAttribute('aria-expanded', 'true');
+        });
+      };
+
+      infoIcons.forEach(icon => {
+        if (!icon.dataset.tooltip && icon.getAttribute('title')) {
+          icon.dataset.tooltip = icon.getAttribute('title');
+        }
+        icon.addEventListener('click', e => {
           e.preventDefault();
           e.stopPropagation();
+          showTooltip(icon);
+        });
+        icon.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            showTooltip(icon);
+          }
+        });
+        icon.addEventListener('blur', () => {
+          setTimeout(() => {
+            if (activeIcon === icon && document.activeElement !== icon) {
+              hideTooltip();
+            }
+          }, 10);
+        });
+      });
+
+      document.addEventListener('click', e => {
+        if (!activeIcon) return;
+        if (!tooltip.contains(e.target) && e.target !== activeIcon) {
+          hideTooltip();
         }
       });
-    });
+
+      document.addEventListener('keydown', e => {
+        if (!activeIcon) return;
+        if (e.key === 'Escape' || e.key === 'Esc') {
+          hideTooltip();
+        }
+      });
+
+      window.addEventListener('scroll', () => {
+        if (!activeIcon) return;
+        hideTooltip();
+      }, true);
+
+      window.addEventListener('resize', () => {
+        if (!activeIcon) return;
+        tooltip.classList.remove('info-tooltip--visible');
+        requestAnimationFrame(() => {
+          if (!activeIcon) return;
+          positionTooltip(activeIcon);
+          tooltip.classList.add('info-tooltip--visible');
+        });
+      });
+    }
 
     // Players
     const playerCols = [
+      { key:'impact',  title:'Импакт', num:true, format:'float' },
       { key:'player',  title:'Игрок' },
       { key:'team',    title:'Команда' },
-      { key:'impact',  title:'Импакт', num:true, format:'float' },
-      { key:'adr',     title:'ADR', num:true, format:'float' },
       { key:'kills',   title:'Убийства', num:true, format:'int' },
-      { key:'assists', title:'Поддержки', num:true, format:'int' },
+      { key:'adr',     title:'ADR', num:true, format:'float' },
+      { key:'assists', title:'Помощь', num:true, format:'int' },
       { key:'revives', title:'Ревайвы', num:true, format:'int' },
       { key:'dbnos',   title:'DBNOs', num:true, format:'int' },
       { key:'timeSurvived', title:'Время (с)', num:true, format:'int' },
