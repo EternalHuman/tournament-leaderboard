@@ -213,6 +213,122 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
 .status-podium__team{font-size:15px; font-weight:600; color:#0a101b; text-align:center; word-break:break-word}
 .status-podium__points{font-size:13px; font-weight:600; color:rgba(10,16,27,.65)}
 
+.status-tiles{
+  width:100%;
+  align-self:stretch;
+  display:grid;
+  grid-template-columns:repeat(5, minmax(0, 1fr));
+  gap:14px;
+  text-align:left;
+}
+.status-tile{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:16px 18px;
+  border-radius:18px;
+  background:rgba(16,26,45,.72);
+  border:1px solid rgba(122,167,255,.16);
+  box-shadow:0 14px 34px rgba(8,15,28,.28);
+  min-height:168px;
+  overflow:hidden;
+}
+.status-tile__header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  width:100%;
+}
+.status-tile__number{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.status-tile__map{
+  margin-left:auto;
+  font-size:16px;
+  font-weight:600;
+  color:#fff;
+  text-align:right;
+  word-break:break-word;
+  max-width:70%;
+}
+.status-tile__times{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  width:100%;
+}
+.status-tile__time{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.status-tile__label{
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.status-tile__value{
+  font-size:14px;
+  font-weight:600;
+  color:#e7f0ff;
+}
+.status-tile__value time{
+  color:inherit;
+  font:inherit;
+  font-weight:inherit;
+}
+.status-tile__winner{
+  margin-top:auto;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  width:100%;
+}
+.status-tile__winner-name{
+  font-size:15px;
+  font-weight:700;
+  color:var(--accent2);
+  word-break:break-word;
+}
+.status-tile__placeholder{
+  align-self:center;
+  margin:4px 0 2px;
+  font-size:48px;
+  line-height:1;
+  font-weight:700;
+  color:rgba(122,167,255,.4);
+}
+.status-tile--pending{
+  background:rgba(14,24,40,.6);
+}
+.status-tile--pending .status-tile__winner-name{
+  color:#d4e7ff;
+}
+.status-tile--pending .status-tile__value{
+  color:rgba(231,240,255,.55);
+}
+
+@media (max-width:1200px){
+  .status-tiles{grid-template-columns:repeat(4, minmax(0, 1fr));}
+}
+@media (max-width:960px){
+  .status-tiles{grid-template-columns:repeat(3, minmax(0, 1fr));}
+}
+@media (max-width:700px){
+  .status-tiles{grid-template-columns:repeat(2, minmax(0, 1fr));}
+}
+@media (max-width:460px){
+  .status-tiles{grid-template-columns:1fr;}
+}
+
 .primary-stat-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px}
 .primary-stat{padding:18px 20px; border-radius:16px; background:rgba(15,24,41,.55); border:1px solid rgba(122,167,255,.18); display:flex; flex-direction:column; gap:8px}
 .primary-stat__label{font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
