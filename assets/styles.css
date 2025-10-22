@@ -17,26 +17,17 @@ html,body{min-height:100%}
 body{
   margin:0;
   font:16px/1.6 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-    radial-gradient(1200px 700px at -10% -20%, rgba(122,167,255,.25), transparent 70%),
-    radial-gradient(1000px 600px at 110% 0%, rgba(88,245,193,.22), transparent 70%),
-    linear-gradient(180deg, var(--bg), var(--bg-tint));
   color:var(--fg);
   -webkit-font-smoothing:antialiased;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  pointer-events:none;
   background:
-    radial-gradient(1200px 700px at -10% -20%, rgba(122,167,255,.25), transparent 70%),
-    radial-gradient(1000px 600px at 110% 0%, rgba(88,245,193,.22), transparent 70%),
+    radial-gradient(120% 95% at -10% -20%, rgba(122,167,255,.16), transparent 78%),
+    radial-gradient(110% 90% at 110% -10%, rgba(88,245,193,.12), transparent 78%),
+    radial-gradient(160% 120% at 50% -35%, rgba(60,90,160,.16), transparent 82%),
     linear-gradient(180deg, var(--bg), var(--bg-tint));
-  background-repeat:no-repeat, no-repeat, no-repeat;
-  background-size:1400px 900px, 1200px 720px, cover;
-  will-change:transform;
+  background-repeat:no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size:135% 120%, 135% 120%, 150% 120%, cover;
+  background-position:-25% -25%, 125% -22%, 50% -32%, center;
+  background-color:var(--bg);
 }
 
 a{color:var(--accent); text-decoration:none}
@@ -122,6 +113,28 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
 .overview-layout{display:flex; flex-direction:column; gap:24px}
 .overview-primary{gap:28px}
 
+.status-card{margin-bottom:28px}
+.status-card__header{display:flex; justify-content:space-between; align-items:center; gap:12px}
+.status-card__state{font-size:14px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase}
+.status-card__body{display:flex; flex-direction:column; gap:18px; align-items:center; text-align:center}
+.status-message{font-size:16px; font-weight:600; letter-spacing:.01em}
+.status-countdown{display:flex; flex-wrap:wrap; gap:12px; justify-content:center}
+.status-countdown__item{min-width:96px; padding:12px 14px; border-radius:16px; background:rgba(16,26,45,.7); border:1px solid rgba(122,167,255,.22); display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:0 12px 30px rgba(12,20,36,.35)}
+.status-countdown__value{font-size:30px; font-weight:700; font-variant-numeric:tabular-nums; color:#fff}
+.status-countdown__label{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted)}
+.status-podium{display:flex; justify-content:center; align-items:flex-end; gap:18px; flex-wrap:wrap; margin-top:4px}
+.status-podium__slot{display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center}
+.status-podium__slot--second{order:0}
+.status-podium__slot--first{order:1}
+.status-podium__slot--third{order:2}
+.status-podium__block{width:132px; min-height:120px; padding:18px 16px; border-radius:20px; display:flex; flex-direction:column; align-items:center; gap:8px; color:#0a101b; box-shadow:0 16px 40px rgba(6,8,12,.45)}
+.status-podium__slot--first .status-podium__block{width:168px; min-height:150px; background:linear-gradient(180deg, #ffe7a0, #ffb43f)}
+.status-podium__slot--second .status-podium__block{background:linear-gradient(180deg, #ecf1ff, #b8c2d8)}
+.status-podium__slot--third .status-podium__block{background:linear-gradient(180deg, #fde0b2, #d18a43)}
+.status-podium__place{font-size:28px; font-weight:700; letter-spacing:.06em}
+.status-podium__team{font-size:15px; font-weight:600; color:#0a101b; text-align:center; word-break:break-word}
+.status-podium__points{font-size:13px; font-weight:600; color:rgba(10,16,27,.65)}
+
 .primary-stat-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px}
 .primary-stat{padding:18px 20px; border-radius:16px; background:rgba(15,24,41,.55); border:1px solid rgba(122,167,255,.18); display:flex; flex-direction:column; gap:8px}
 .primary-stat__label{font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
@@ -136,6 +149,13 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
 .info-card__header{display:flex; flex-direction:column; gap:6px}
 .info-card__header h3{margin:0; font-size:18px; letter-spacing:.01em}
 .info-card__header p{margin:0; color:var(--muted); font-size:14px}
+
+@media (max-width:600px){
+  .status-countdown__item{min-width:calc(50% - 8px); flex:1}
+  .status-podium{gap:14px}
+  .status-podium__block{width:120px}
+  .status-podium__slot--first .status-podium__block{width:150px}
+}
 
 .placements-list{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:16px}
 .placement-row{display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; padding:20px 18px; border-radius:18px; background:rgba(17,29,50,.7); border:1px solid rgba(122,167,255,.14)}
@@ -180,6 +200,62 @@ th.sortable{cursor:pointer; user-select:none}
 th.sortable:after{content:" ⇅"; color:var(--muted); font-weight:400}
 th.sortable[data-dir="asc"]:after{content:" ↑"}
 th.sortable[data-dir="desc"]:after{content:" ↓"}
+.th-label{display:inline-flex; align-items:center; gap:6px}
+.info-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:18px;
+  font-size:11px;
+  font-weight:600;
+  border-radius:50%;
+  margin-left:2px;
+  border:1px solid rgba(122,167,255,.35);
+  color:var(--accent);
+  background:rgba(122,167,255,.12);
+  cursor:pointer;
+  transition:background .2s, border-color .2s, color .2s;
+  padding:0;
+  font-family:inherit;
+  line-height:1;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.info-icon:hover,
+.info-icon:focus{
+  border-color:rgba(122,167,255,.6);
+  background:rgba(122,167,255,.22);
+  color:#fff;
+}
+.info-icon:focus{outline:2px solid rgba(122,167,255,.45); outline-offset:2px}
+.info-icon[aria-expanded="true"]{
+  border-color:rgba(122,167,255,.8);
+  background:rgba(122,167,255,.28);
+  color:#fff;
+}
+
+.info-tooltip{
+  position:absolute;
+  z-index:9999;
+  padding:8px 12px;
+  border-radius:10px;
+  background:rgba(15,24,41,.95);
+  border:1px solid rgba(122,167,255,.3);
+  color:#e9f1ff;
+  font-size:13px;
+  line-height:1.4;
+  max-width:240px;
+  box-shadow:0 10px 30px rgba(10,18,35,.45);
+  opacity:0;
+  transform:translateY(-4px);
+  pointer-events:none;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.info-tooltip.info-tooltip--visible{
+  opacity:1;
+  transform:translateY(0);
+}
 .num{text-align:right; font-variant-numeric: tabular-nums}
 .pills{display:flex; gap:8px; flex-wrap:wrap}
 .pill{padding:4px 10px; border-radius:999px; background:rgba(17,29,50,.7); font-size:12px; color:#d7e7ff; border:1px solid rgba(122,167,255,.2)}
@@ -193,7 +269,7 @@ th.sortable[data-dir="desc"]:after{content:" ↓"}
 /* Team per-match card layout */
 .pergrid{
   display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap:14px;
 }
 .teamcard{
@@ -205,6 +281,7 @@ th.sortable[data-dir="desc"]:after{content:" ↓"}
   display:flex;
   flex-direction:column;
   min-height:120px;
+  min-width:0;
 }
 .teamcard-title{
   text-align:left;
@@ -342,7 +419,7 @@ th.sortable[data-dir="desc"]:after{content:" ↓"}
   border-radius:14px;
 }
 .table-wrap > table{
-  min-width:720px;
+  min-width:760px;
   border-radius:inherit;
 }
 
@@ -351,11 +428,7 @@ th.sortable[data-dir="desc"]:after{content:" ↓"}
   /* Teams table: hide Avg place + Matches */
   #teamsTable th:nth-child(5), #teamsTable td:nth-child(5),
   #teamsTable th:nth-child(6), #teamsTable td:nth-child(6){ display:none; }
-  /* Players table: hide ADR, Assists, Revives, DBNOs, Time */
-  #playersTable th:nth-child(4), #playersTable td:nth-child(4),
-  #playersTable th:nth-child(6), #playersTable td:nth-child(6),
-  #playersTable th:nth-child(7), #playersTable td:nth-child(7),
-  #playersTable th:nth-child(8), #playersTable td:nth-child(8),
+  /* Players table: keep ключевые столбцы, скрывая только длительность выживания */
   #playersTable th:nth-child(9), #playersTable td:nth-child(9){ display:none; }
   /* Slightly tighter cells */
   table{ font-size:14px; }
