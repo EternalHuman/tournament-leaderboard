@@ -470,6 +470,15 @@ async function init() {
       };
     };
 
+    const formatMatchDuration = value => {
+      const seconds = toNumber(value);
+      if (!Number.isFinite(seconds)) return null;
+      const totalSeconds = Math.max(0, Math.floor(seconds));
+      const minutes = Math.floor(totalSeconds / 60);
+      const remainder = totalSeconds % 60;
+      return `${minutes}:${String(remainder).padStart(2, '0')}`;
+    };
+
     const buildMatchTilesHtml = () => {
       const slotCount = Math.max(matchSlots || 0, matches.length, mapsList.length);
       if (!slotCount) return '';
@@ -497,17 +506,20 @@ async function init() {
         let endSegment = null;
         let winnerName = null;
         let isCompleted = false;
+        let durationLabel = null;
 
         if (matchData) {
+          const durationSec = toNumber(matchData?.duration);
           const startDate = matchData?.date ? new Date(matchData.date) : null;
           if (startDate instanceof Date && !Number.isNaN(startDate.getTime())) {
             startSegment = formatMatchDateTime(startDate);
-            const durationSec = toNumber(matchData.duration);
             if (Number.isFinite(durationSec)) {
               const endDate = new Date(startDate.getTime() + durationSec * 1000);
               endSegment = formatMatchDateTime(endDate);
             }
           }
+
+          durationLabel = Number.isFinite(durationSec) ? formatMatchDuration(durationSec) : null;
 
           const teams = Array.isArray(matchData?.teams) ? matchData.teams : [];
           const winnerEntry = teams.reduce((best, current) => {
@@ -541,6 +553,9 @@ async function init() {
         const endText = endSegment
           ? `<time datetime="${escapeHtml(endSegment.iso)}">${escapeHtml(endSegment.text)}</time>`
           : '—';
+        const durationText = (isCompleted && durationLabel)
+          ? escapeHtml(durationLabel)
+          : '—';
         const winnerText = winnerName ? escapeHtml(winnerName) : '—';
         const tileClass = isCompleted ? 'status-tile' : 'status-tile status-tile--pending';
 
@@ -559,6 +574,10 @@ async function init() {
               <div class="status-tile__time">
                 <span class="status-tile__label">Конец</span>
                 <span class="status-tile__value">${endText}</span>
+              </div>
+              <div class="status-tile__time">
+                <span class="status-tile__label">Время</span>
+                <span class="status-tile__value">${durationText}</span>
               </div>
             </div>
             <div class="status-tile__winner">
