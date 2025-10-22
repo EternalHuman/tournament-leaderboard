@@ -11,6 +11,7 @@
   --border-soft:rgba(130,160,210,.1);
   --warn:#F59E0B;
   --bad:#EF4444;
+  --table-sticky-offset:0px;
 }
 *{box-sizing:border-box}
 html,body{min-height:100%}
@@ -193,7 +194,19 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
 .input:focus{border-color:rgba(122,167,255,.55); box-shadow:0 0 0 3px rgba(122,167,255,.15)}
 .badge{display:inline-block; padding:6px 14px; border-radius:999px; background:rgba(18,30,52,.7); color:#cfe0ff; font-size:13px; border:1px solid rgba(122,167,255,.16)}
 table{width:100%; border-collapse:separate; border-spacing:0; background:rgba(15,24,41,.55); border:1px solid rgba(122,167,255,.1); border-radius:18px; overflow:hidden}
-thead th{position:sticky; top:0; background:rgba(15,24,41,.9); text-align:left; font-weight:600; padding:14px 16px; border-bottom:1px solid rgba(122,167,255,.12); z-index:1; font-size:14px; color:var(--muted)}
+thead th{
+  position:sticky;
+  top:var(--table-sticky-offset);
+  background:rgba(15,24,41,.9);
+  text-align:left;
+  font-weight:600;
+  padding:14px 16px;
+  border-bottom:1px solid rgba(122,167,255,.12);
+  z-index:5;
+  font-size:14px;
+  color:var(--muted);
+  transition:background .2s ease, box-shadow .2s ease, color .2s ease;
+}
 tbody td{padding:12px 16px; border-bottom:1px solid rgba(122,167,255,.08); font-size:15px}
 tbody tr:hover{background:rgba(20,34,58,.6)}
 th.sortable{cursor:pointer; user-select:none}
@@ -417,10 +430,17 @@ th.sortable[data-dir="desc"]:after{content:" ↓"}
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
   border-radius:14px;
+  position:relative;
 }
 .table-wrap > table{
   min-width:760px;
   border-radius:inherit;
+}
+
+.table-wrap.is-stuck thead th{
+  background:linear-gradient(180deg, rgba(20,32,54,.96), rgba(12,20,36,.96));
+  color:var(--fg);
+  box-shadow:0 10px 30px rgba(5,10,20,.55);
 }
 
 /* Mobile column pruning */
