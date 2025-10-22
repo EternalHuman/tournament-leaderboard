@@ -44,6 +44,25 @@ const pluralizeRu = (value, forms) => {
 };
 const $ = sel => document.querySelector(sel);
 
+function initStickyTableHeaders() {
+  const rootEl = document.documentElement;
+  if (!rootEl) return;
+  const headerEl = document.querySelector('.header');
+
+  const computeOffset = () => {
+    const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
+    const offset = Math.max(headerHeight, 0) + 8;
+    rootEl.style.setProperty('--table-header-offset', `${offset}px`);
+  };
+
+  computeOffset();
+  window.addEventListener('resize', computeOffset);
+  if (typeof ResizeObserver !== 'undefined' && headerEl) {
+    const observer = new ResizeObserver(() => computeOffset());
+    observer.observe(headerEl);
+  }
+}
+
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
   const killsScore = safe(kills) * 5;
@@ -206,6 +225,7 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
 
 async function init() {
   try {
+    initStickyTableHeaders();
     window.__meta = await loadJSON('data/meta.json').catch(()=>({}));
     const m = window.__meta;
     const updated = m?.generatedAt ? new Date(m.generatedAt).toLocaleString('ru-RU') : 'неизвестно';
