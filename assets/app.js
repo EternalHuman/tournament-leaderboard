@@ -44,6 +44,42 @@ const pluralizeRu = (value, forms) => {
 };
 const $ = sel => document.querySelector(sel);
 
+const rootElement = document.documentElement;
+
+const computeStickyTableOffset = (() => {
+  let lastHeight = null;
+  return () => {
+    const header = document.querySelector('.header');
+    const rect = header ? header.getBoundingClientRect() : null;
+    const offset = rect ? Math.ceil(rect.height + 12) : 12;
+    if (lastHeight === offset) return;
+    lastHeight = offset;
+    rootElement.style.setProperty('--table-sticky-top', `${offset}px`);
+  };
+})();
+
+function setupStickyTableHeaders() {
+  const scheduleUpdate = () => {
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => computeStickyTableOffset());
+    } else {
+      computeStickyTableOffset();
+    }
+  };
+
+  computeStickyTableOffset();
+  window.addEventListener('resize', scheduleUpdate);
+  window.addEventListener('orientationchange', scheduleUpdate);
+  window.addEventListener('load', scheduleUpdate);
+
+  const header = document.querySelector('.header');
+  if (header && typeof ResizeObserver === 'function') {
+    const observer = new ResizeObserver(() => scheduleUpdate());
+    observer.observe(header);
+    setupStickyTableHeaders._observer = observer;
+  }
+}
+
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
   const killsScore = safe(kills) * 5;
@@ -871,4 +907,13 @@ async function init() {
   }
 }
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+function boot() {
+  setupStickyTableHeaders();
+  init();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
