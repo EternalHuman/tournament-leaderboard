@@ -423,11 +423,11 @@ async function init() {
     teamRows.sort((a, b) => {
       const diffPoints = (b.points ?? 0) - (a.points ?? 0);
       if (diffPoints !== 0) return diffPoints;
-      const diffKills = (b.kills ?? 0) - (a.kills ?? 0);
-      if (diffKills !== 0) return diffKills;
       const avgA = Number.isFinite(a.placeAvg) ? a.placeAvg : Infinity;
       const avgB = Number.isFinite(b.placeAvg) ? b.placeAvg : Infinity;
       if (avgA !== avgB) return avgA - avgB;
+      const diffKills = (b.kills ?? 0) - (a.kills ?? 0);
+      if (diffKills !== 0) return diffKills;
       return (a.id ?? 0) - (b.id ?? 0);
     });
     teamRows.forEach((row, idx) => { row.place = idx + 1; });
@@ -583,7 +583,20 @@ async function init() {
         matchesEl.innerHTML = matchCards.join('');
       }
     }
-    sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'points', dir:'desc'});
+    sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'place', dir:'asc'});
+
+    document.querySelectorAll('.info-icon').forEach(icon => {
+      icon.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      icon.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+    });
 
     // Players
     const playerCols = [
