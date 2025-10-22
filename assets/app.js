@@ -44,80 +44,6 @@ const pluralizeRu = (value, forms) => {
 };
 const $ = sel => document.querySelector(sel);
 
-let refreshStickyHeaders = () => {};
-
-function setupStickyTableHeaders() {
-  const root = document.documentElement;
-  const headerEl = document.querySelector('.header');
-  if (!root) return () => {};
-
-  const getWrappers = () => Array.from(document.querySelectorAll('.table-wrap'));
-
-  const extraGap = 12;
-  let currentOffset = 0;
-  let offsetRaf = null;
-  let stickyRaf = null;
-
-  const applyOffset = () => {
-    offsetRaf = null;
-    const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
-    currentOffset = Math.max(0, Math.round(headerHeight + extraGap));
-    root.style.setProperty('--table-sticky-offset', `${currentOffset}px`);
-  };
-
-  const applyStickyState = () => {
-    stickyRaf = null;
-    const offsetValue = currentOffset || 0;
-    getWrappers().forEach(wrap => {
-      const table = wrap?.querySelector('table');
-      const thead = table?.tHead;
-      if (!thead) {
-        wrap?.classList.remove('is-stuck');
-        return;
-      }
-      const rect = thead.getBoundingClientRect();
-      const isStuck = rect.top <= offsetValue + 0.5 && rect.bottom > offsetValue + 0.5;
-      wrap.classList.toggle('is-stuck', isStuck);
-    });
-  };
-
-  const requestOffsetUpdate = () => {
-    if (offsetRaf != null) cancelAnimationFrame(offsetRaf);
-    offsetRaf = requestAnimationFrame(applyOffset);
-  };
-
-  const requestStickyUpdate = () => {
-    if (stickyRaf != null) cancelAnimationFrame(stickyRaf);
-    stickyRaf = requestAnimationFrame(applyStickyState);
-  };
-
-  const onScroll = () => requestStickyUpdate();
-  const onResize = () => {
-    requestOffsetUpdate();
-    requestStickyUpdate();
-  };
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onResize);
-  window.addEventListener('orientationchange', onResize);
-
-  if (headerEl && typeof ResizeObserver === 'function') {
-    const observer = new ResizeObserver(() => {
-      requestOffsetUpdate();
-      requestStickyUpdate();
-    });
-    observer.observe(headerEl);
-  }
-
-  requestOffsetUpdate();
-  requestStickyUpdate();
-
-  return () => {
-    requestOffsetUpdate();
-    requestStickyUpdate();
-  };
-}
-
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
   const killsScore = safe(kills) * 5;
@@ -220,8 +146,6 @@ function setActiveTab(id, options) {
   });
   location.hash = id;
 
-  refreshStickyHeaders();
-
   if (!alreadyActive && opts.scroll !== false) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -265,8 +189,6 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
       th.dataset.dir = th.dataset.key === state.key ? state.dir : '';
     });
     if (counterEl) counterEl.textContent = data.length + ' записей';
-
-    refreshStickyHeaders();
   }
 
   tableEl.querySelectorAll('th.sortable').forEach(th => {
@@ -284,7 +206,6 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
 
 async function init() {
   try {
-    refreshStickyHeaders = setupStickyTableHeaders();
     window.__meta = await loadJSON('data/meta.json').catch(()=>({}));
     const m = window.__meta;
     const updated = m?.generatedAt ? new Date(m.generatedAt).toLocaleString('ru-RU') : 'неизвестно';
