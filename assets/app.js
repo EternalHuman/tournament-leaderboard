@@ -44,6 +44,106 @@ const pluralizeRu = (value, forms) => {
 };
 const $ = sel => document.querySelector(sel);
 
+const rootElement = document.documentElement;
+const TABLE_HEADER_STICKY_GAP = 12;
+const supportsIntersectionObserver = typeof IntersectionObserver !== 'undefined';
+let headerResizeObserver = null;
+let stickyOffsetListenersAttached = false;
+let tableStickyObserver = null;
+let stickyFallbackUpdateScheduled = false;
+let stickyFallbackListenersAttached = false;
+
+const updateTableStickyOffset = (() => {
+  let frameId = null;
+  const apply = () => {
+    frameId = null;
+    const headerEl = document.querySelector('.header');
+    let headerHeight = 0;
+    if (headerEl) {
+      const styles = window.getComputedStyle(headerEl);
+      const marginBottom = parseFloat(styles.marginBottom) || 0;
+      headerHeight = headerEl.offsetHeight + marginBottom;
+    }
+    const offsetValue = headerHeight > 0
+      ? Math.round(headerHeight + TABLE_HEADER_STICKY_GAP)
+      : 0;
+    rootElement.style.setProperty('--table-header-offset', `${offsetValue}px`);
+  };
+  return () => {
+    if (frameId != null) cancelAnimationFrame(frameId);
+    frameId = requestAnimationFrame(apply);
+  };
+})();
+
+function ensureTableStickyObserver() {
+  if (!supportsIntersectionObserver) return null;
+  if (tableStickyObserver) return tableStickyObserver;
+  tableStickyObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const wrap = entry.target?.parentElement;
+      if (!wrap || !wrap.classList) return;
+      const shouldStick = !entry.isIntersecting && entry.boundingClientRect.top <= 0;
+      wrap.classList.toggle('table-wrap--stuck', shouldStick);
+    });
+  }, { threshold: [0] });
+  return tableStickyObserver;
+}
+
+function scheduleStickyFallbackUpdate() {
+  if (supportsIntersectionObserver) return;
+  if (stickyFallbackUpdateScheduled) return;
+  stickyFallbackUpdateScheduled = true;
+  requestAnimationFrame(() => {
+    stickyFallbackUpdateScheduled = false;
+    document.querySelectorAll('.table-wrap').forEach(wrap => {
+      if (wrap.dataset.stickyReady !== '1') return;
+      const sentinel = wrap.querySelector('.table-sticky-sentinel');
+      if (!sentinel) return;
+      const rect = sentinel.getBoundingClientRect();
+      const shouldStick = rect.top <= 0;
+      wrap.classList.toggle('table-wrap--stuck', shouldStick);
+    });
+  });
+}
+
+function ensureStickyFallbackListeners() {
+  if (supportsIntersectionObserver || stickyFallbackListenersAttached) return;
+  window.addEventListener('scroll', scheduleStickyFallbackUpdate, { passive: true });
+  window.addEventListener('resize', scheduleStickyFallbackUpdate);
+  window.addEventListener('orientationchange', scheduleStickyFallbackUpdate);
+  stickyFallbackListenersAttached = true;
+}
+
+function setupStickyTableHeaders() {
+  const observer = ensureTableStickyObserver();
+  document.querySelectorAll('.table-wrap').forEach(wrap => {
+    if (wrap.dataset.stickyReady === '1') return;
+    const sentinel = document.createElement('div');
+    sentinel.className = 'table-sticky-sentinel';
+    sentinel.setAttribute('aria-hidden', 'true');
+    wrap.insertBefore(sentinel, wrap.firstChild);
+    if (observer) {
+      observer.observe(sentinel);
+    }
+    wrap.dataset.stickyReady = '1';
+  });
+  if (!observer) {
+    ensureStickyFallbackListeners();
+    scheduleStickyFallbackUpdate();
+  }
+}
+
+function resetHiddenTableStickyState() {
+  document.querySelectorAll('[data-panel]').forEach(panel => {
+    if (panel.style.display === 'none') {
+      panel.querySelectorAll('.table-wrap').forEach(wrap => {
+        wrap.classList.remove('table-wrap--stuck');
+      });
+    }
+  });
+  scheduleStickyFallbackUpdate();
+}
+
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
   const killsScore = safe(kills) * 5;
@@ -144,6 +244,10 @@ function setActiveTab(id, options) {
   document.querySelectorAll('[data-panel]').forEach(el => {
     el.style.display = (el.dataset.panel === id) ? 'block' : 'none';
   });
+  resetHiddenTableStickyState();
+  setupStickyTableHeaders();
+  scheduleStickyFallbackUpdate();
+  updateTableStickyOffset();
   location.hash = id;
 
   if (!alreadyActive && opts.scroll !== false) {
@@ -206,6 +310,28 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
 
 async function init() {
   try {
+    updateTableStickyOffset();
+    setupStickyTableHeaders();
+    scheduleStickyFallbackUpdate();
+    if (!stickyOffsetListenersAttached) {
+      window.addEventListener('resize', updateTableStickyOffset);
+      window.addEventListener('orientationchange', updateTableStickyOffset);
+      if (document.readyState !== 'complete') {
+        window.addEventListener('load', updateTableStickyOffset, { once: true });
+      }
+      stickyOffsetListenersAttached = true;
+    }
+    const headerEl = document.querySelector('.header');
+    if (typeof ResizeObserver !== 'undefined') {
+      if (headerResizeObserver) {
+        headerResizeObserver.disconnect();
+      }
+      if (headerEl) {
+        headerResizeObserver = new ResizeObserver(() => updateTableStickyOffset());
+        headerResizeObserver.observe(headerEl);
+      }
+    }
+
     window.__meta = await loadJSON('data/meta.json').catch(()=>({}));
     const m = window.__meta;
     const updated = m?.generatedAt ? new Date(m.generatedAt).toLocaleString('ru-RU') : 'неизвестно';
