@@ -44,6 +44,33 @@ const pluralizeRu = (value, forms) => {
 };
 const $ = sel => document.querySelector(sel);
 
+function setupStickyTableHeaders() {
+  const headerEl = document.querySelector('.header');
+  if (!headerEl) return;
+
+  const root = document.documentElement;
+  let lastHeight = null;
+
+  const apply = () => {
+    const rect = headerEl.getBoundingClientRect();
+    const height = Math.round(rect.height);
+    if (!Number.isFinite(height)) return;
+    if (lastHeight === height) return;
+    lastHeight = height;
+    root.style.setProperty('--sticky-header-height', `${height}px`);
+  };
+
+  apply();
+
+  if (typeof ResizeObserver === 'function') {
+    const observer = new ResizeObserver(() => apply());
+    observer.observe(headerEl);
+  }
+
+  window.addEventListener('resize', apply);
+  window.addEventListener('load', apply);
+}
+
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
   const killsScore = safe(kills) * 5;
@@ -205,6 +232,7 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
 }
 
 async function init() {
+  setupStickyTableHeaders();
   try {
     window.__meta = await loadJSON('data/meta.json').catch(()=>({}));
     const m = window.__meta;
