@@ -68,6 +68,17 @@
   <main class="main">
     <!-- Overview -->
     <section class="card card--section" data-panel="overview">
+      <article class="info-card info-card--accent status-card" id="statusCard">
+        <header class="info-card__header status-card__header">
+          <h3>Статус</h3>
+          <span class="status-card__state" id="statusState">Обновление…</span>
+        </header>
+        <div class="status-card__body">
+          <div class="status-message" id="statusMessage">Загрузка статуса турнира…</div>
+          <div class="status-countdown" id="statusCountdown" aria-live="polite" aria-atomic="true"></div>
+          <div class="status-podium" id="statusPodium" hidden></div>
+        </div>
+      </article>
       <div class="section-header">
         <div>
           <h2>Правила и настройки</h2>

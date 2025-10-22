@@ -32,6 +32,16 @@ const formatPoints = (value, { signed = true } = {}) => {
   const suffix = pluralizePoints(num);
   return `${signChar}${formatted} ${suffix}`;
 };
+const pluralizeRu = (value, forms) => {
+  if (!Array.isArray(forms) || forms.length < 3) return '';
+  const [one, few, many] = forms;
+  const num = Math.abs(Math.trunc(Number.isFinite(value) ? value : 0));
+  const mod10 = num % 10;
+  const mod100 = num % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+};
 const $ = sel => document.querySelector(sel);
 
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
@@ -206,6 +216,18 @@ async function init() {
       loadJSON('data/teams.json')
     ]);
 
+    const statusEls = {
+      card: $('#statusCard'),
+      state: $('#statusState'),
+      message: $('#statusMessage'),
+      countdown: $('#statusCountdown'),
+      podium: $('#statusPodium')
+    };
+    const startTimeRaw = tInfo?.startTime;
+    const startDate = startTimeRaw ? new Date(startTimeRaw) : null;
+    const hasValidStart = startDate instanceof Date && !Number.isNaN(startDate.getTime());
+    let countdownTimer = null;
+
     const killPoint = toNumber(tInfo?.scoring?.killPoints ?? 0) || 0;
     const resolvePlacementPoints = createPlacementResolver(tInfo?.scoring?.placements);
     const totalFromInfo = Number(tInfo?.matches?.total) || 0;
@@ -223,8 +245,9 @@ async function init() {
 
     const matchPromises = [];
     const mapsList = Array.isArray(tInfo?.matches?.maps) ? tInfo.matches.maps : [];
-    const plannedMatches = totalFromInfo || mapsList.length;
-    const attempts = Math.max(plannedMatches, 1);
+    const expectedMatchesCount = totalFromInfo > 0 ? totalFromInfo : (mapsList.length > 0 ? mapsList.length : null);
+    const plannedMatches = expectedMatchesCount ?? mapsList.length;
+    const attempts = Math.max(plannedMatches || 0, 1);
     for (let i = 1; i <= attempts; i += 1) {
       matchPromises.push(
         loadJSON(`data/match${i}.json`).then(data => ({ ...data, __index: i }))
@@ -278,9 +301,7 @@ async function init() {
 
     const killPoints = tInfo?.scoring?.killPoints ?? 0;
     $('#t-kill').textContent = formatPoints(killPoints);
-    const plannedTotal = (Number.isFinite(totalFromInfo) && totalFromInfo > 0)
-      ? totalFromInfo
-      : Math.max(matchCount, mapsList.length);
+    const plannedTotal = expectedMatchesCount ?? Math.max(matchCount, mapsList.length);
     const matchesSummary = `Сыграно ${fmtNumber(matchCount)} из ${fmtNumber(plannedTotal)} матчей`;
     $('#t-matches').textContent = matchesSummary;
     const maps = mapsList;
@@ -431,6 +452,132 @@ async function init() {
       return (a.id ?? 0) - (b.id ?? 0);
     });
     teamRows.forEach((row, idx) => { row.place = idx + 1; });
+
+    const renderCountdown = remainingMs => {
+      if (!statusEls?.countdown) return;
+      const totalSeconds = Math.max(Math.floor(remainingMs / 1000), 0);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const segments = [
+        { value: days, forms: ['день', 'дня', 'дней'], pad: days < 100 ? 2 : String(days).length },
+        { value: hours, forms: ['час', 'часа', 'часов'], pad: 2 },
+        { value: minutes, forms: ['минута', 'минуты', 'минут'], pad: 2 },
+        { value: seconds, forms: ['секунда', 'секунды', 'секунд'], pad: 2 }
+      ];
+      statusEls.countdown.innerHTML = segments.map(segment => {
+        const label = pluralizeRu(segment.value, segment.forms);
+        const value = segment.pad ? String(segment.value).padStart(segment.pad, '0') : String(segment.value);
+        return `
+          <div class="status-countdown__item">
+            <span class="status-countdown__value">${value}</span>
+            <span class="status-countdown__label">${label}</span>
+          </div>
+        `;
+      }).join('');
+    };
+
+    const renderPodium = winners => {
+      if (!statusEls?.podium) return;
+      const slots = [
+        { place: 2, modifier: 'second', data: winners[1] },
+        { place: 1, modifier: 'first', data: winners[0] },
+        { place: 3, modifier: 'third', data: winners[2] }
+      ].filter(slot => slot.data);
+      if (!slots.length) {
+        statusEls.podium.innerHTML = '';
+        statusEls.podium.hidden = true;
+        return;
+      }
+      statusEls.podium.innerHTML = slots.map(slot => {
+        const row = slot.data;
+        const teamInfo = teamsById.get(row.id);
+        const teamName = teamInfo?.name || teamInfo?.displayName || row.team || `Команда ${fmtNumber(row.id)}`;
+        const pointsValue = Number.isFinite(toNumber(row.points)) ? fmtNumber(toNumber(row.points)) : null;
+        const pointsText = pointsValue != null ? `${pointsValue} очков` : '';
+        return `
+          <div class="status-podium__slot status-podium__slot--${slot.modifier}">
+            <div class="status-podium__block">
+              <div class="status-podium__place">${slot.place}</div>
+              <div class="status-podium__team">${teamName}</div>
+              ${pointsText ? `<div class="status-podium__points">${pointsText}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+      statusEls.podium.hidden = false;
+    };
+
+    const updateStatusCard = () => {
+      if (!statusEls?.card) return;
+      const now = new Date();
+      const beforeStart = hasValidStart && now < startDate;
+      const winners = teamRows.filter(row => (row.matches ?? 0) > 0 || (row.points ?? 0) !== 0).slice(0, 3);
+      const hasResults = matchCount > 0 && winners.length > 0;
+      const allMatchesPlayed = (expectedMatchesCount != null && expectedMatchesCount > 0)
+        ? matchCount >= expectedMatchesCount
+        : false;
+
+      if (beforeStart) {
+        statusEls.state && (statusEls.state.textContent = 'Турнир ещё не начался');
+        statusEls.message && (statusEls.message.textContent = 'До начала турнира осталось:');
+        if (statusEls.countdown) {
+          statusEls.countdown.hidden = false;
+          renderCountdown(startDate.getTime() - now.getTime());
+        }
+        if (statusEls.podium) {
+          statusEls.podium.hidden = true;
+          statusEls.podium.innerHTML = '';
+        }
+        return;
+      }
+
+      if (statusEls.countdown) {
+        statusEls.countdown.hidden = true;
+        statusEls.countdown.innerHTML = '';
+      }
+
+      if (allMatchesPlayed && hasResults) {
+        statusEls.state && (statusEls.state.textContent = 'Турнир завершён');
+        statusEls.message && (statusEls.message.textContent = winners.length >= 3
+          ? 'Поздравляем призёров турнира:'
+          : 'Итоги турнира: призовые места');
+        renderPodium(winners);
+        return;
+      }
+
+      if ((hasValidStart && now >= startDate) || hasResults) {
+        statusEls.state && (statusEls.state.textContent = 'Турнир в процессе');
+        statusEls.message && (statusEls.message.textContent = 'Турнир начался, ожидание результатов...');
+        if (statusEls.podium) {
+          statusEls.podium.hidden = true;
+          statusEls.podium.innerHTML = '';
+        }
+        return;
+      }
+
+      statusEls.state && (statusEls.state.textContent = 'Статус турнира');
+      statusEls.message && (statusEls.message.textContent = 'Информация будет обновлена по мере появления данных.');
+      if (statusEls.podium) {
+        statusEls.podium.hidden = true;
+        statusEls.podium.innerHTML = '';
+      }
+    };
+
+    updateStatusCard();
+    if (hasValidStart && statusEls?.card) {
+      const tick = () => {
+        updateStatusCard();
+        if (new Date() >= startDate && countdownTimer) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+      };
+      if (new Date() < startDate) {
+        countdownTimer = setInterval(tick, 1000);
+      }
+    }
 
     const playerRows = Array.from(playerStats.values()).map(stat => {
       const teamInfo = stat.teamId != null ? teamsById.get(stat.teamId) : null;
