@@ -11,8 +11,6 @@
   --border-soft:rgba(130,160,210,.1);
   --warn:#F59E0B;
   --bad:#EF4444;
-  --sticky-header-height:0px;
-  --table-sticky-gap:12px;
 }
 *{box-sizing:border-box}
 html,body{min-height:100%}
@@ -159,10 +157,6 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
   .status-podium__slot--first .status-podium__block{width:150px}
 }
 
-@media (max-width:600px){
-  :root{ --table-sticky-gap:8px; }
-}
-
 .placements-list{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:16px}
 .placement-row{display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; padding:20px 18px; border-radius:18px; background:rgba(17,29,50,.7); border:1px solid rgba(122,167,255,.14)}
 .placement-rank{width:68px; height:68px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:.02em; color:#fff; background:linear-gradient(135deg, rgba(122,167,255,.85), rgba(88,245,193,.65)); box-shadow:0 12px 26px rgba(90,140,220,.35)}
@@ -199,21 +193,7 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
 .input:focus{border-color:rgba(122,167,255,.55); box-shadow:0 0 0 3px rgba(122,167,255,.15)}
 .badge{display:inline-block; padding:6px 14px; border-radius:999px; background:rgba(18,30,52,.7); color:#cfe0ff; font-size:13px; border:1px solid rgba(122,167,255,.16)}
 table{width:100%; border-collapse:separate; border-spacing:0; background:rgba(15,24,41,.55); border:1px solid rgba(122,167,255,.1); border-radius:18px; overflow:hidden}
-thead th{
-  position:sticky;
-  top:calc(var(--sticky-header-height, 0px) + var(--table-sticky-gap, 0px));
-  background:linear-gradient(180deg, rgba(15,24,41,.94), rgba(15,24,41,.86));
-  text-align:left;
-  font-weight:600;
-  padding:14px 16px;
-  border-bottom:1px solid rgba(122,167,255,.12);
-  z-index:5;
-  font-size:14px;
-  color:var(--muted);
-  backdrop-filter:blur(10px);
-}
-thead th:first-child{border-top-left-radius:18px}
-thead th:last-child{border-top-right-radius:18px}
+thead th{position:sticky; top:0; background:rgba(15,24,41,.9); text-align:left; font-weight:600; padding:14px 16px; border-bottom:1px solid rgba(122,167,255,.12); z-index:1; font-size:14px; color:var(--muted)}
 tbody td{padding:12px 16px; border-bottom:1px solid rgba(122,167,255,.08); font-size:15px}
 tbody tr:hover{background:rgba(20,34,58,.6)}
 th.sortable{cursor:pointer; user-select:none}
