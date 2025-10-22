@@ -42,6 +42,16 @@ const pluralizeRu = (value, forms) => {
   if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
   return many;
 };
+const escapeHtml = value => {
+  if (value == null) return '';
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[char] || char);
+};
 const $ = sel => document.querySelector(sel);
 
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
@@ -220,6 +230,7 @@ async function init() {
       card: $('#statusCard'),
       state: $('#statusState'),
       message: $('#statusMessage'),
+      tiles: $('#statusTiles'),
       countdown: $('#statusCountdown'),
       podium: $('#statusPodium')
     };
@@ -227,6 +238,17 @@ async function init() {
     const startDate = startTimeRaw ? new Date(startTimeRaw) : null;
     const hasValidStart = startDate instanceof Date && !Number.isNaN(startDate.getTime());
     let countdownTimer = null;
+
+    const setStatusMessage = text => {
+      if (!statusEls?.message) return;
+      if (typeof text === 'string' && text.trim().length > 0) {
+        statusEls.message.hidden = false;
+        statusEls.message.textContent = text;
+      } else {
+        statusEls.message.textContent = '';
+        statusEls.message.hidden = true;
+      }
+    };
 
     const killPoint = toNumber(tInfo?.scoring?.killPoints ?? 0) || 0;
     const resolvePlacementPoints = createPlacementResolver(tInfo?.scoring?.placements);
@@ -426,6 +448,165 @@ async function init() {
       return { ...match, slot };
     });
 
+    const getTeamDisplayName = teamId => {
+      const id = toNumber(teamId);
+      if (!Number.isFinite(id)) return '—';
+      const info = teamsById.get(id);
+      if (info) {
+        return info.name || info.displayName || `Команда ${fmtNumber(id)}`;
+      }
+      return `Команда ${fmtNumber(id)}`;
+    };
+
+    const dateFormatter = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'short' });
+    const timeFormatter = new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const formatMatchDateTime = date => {
+      if (!(date instanceof Date) || Number.isNaN(date.getTime())) return null;
+      const dateText = dateFormatter.format(date).replace(/\s+/g, ' ').trim();
+      const timeText = timeFormatter.format(date);
+      return {
+        text: `${dateText} • ${timeText}`,
+        iso: date.toISOString()
+      };
+    };
+
+    const formatMatchDuration = seconds => {
+      if (!Number.isFinite(seconds)) return null;
+      const totalSeconds = Math.max(0, Math.floor(seconds));
+      const minutes = Math.floor(totalSeconds / 60);
+      const remainingSeconds = totalSeconds % 60;
+      return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
+    };
+
+    const buildMatchTilesHtml = () => {
+      const slotCount = Math.max(matchSlots || 0, matches.length, mapsList.length);
+      if (!slotCount) return '';
+
+      const matchBySlot = new Map();
+      matches.forEach(match => {
+        const slotIdx = Number.isFinite(match?.slot) ? Number(match.slot) : null;
+        if (slotIdx != null && slotIdx >= 0) {
+          matchBySlot.set(slotIdx, match);
+          return;
+        }
+        const fallbackIdx = Number.isFinite(toNumber(match?.__index)) ? toNumber(match.__index) - 1 : null;
+        if (fallbackIdx != null && fallbackIdx >= 0) {
+          matchBySlot.set(fallbackIdx, match);
+        }
+      });
+
+      return Array.from({ length: slotCount }, (_, idx) => {
+        const matchNumber = idx + 1;
+        const matchData = matchBySlot.get(idx);
+        const mapNameRaw = matchData?.map || mapsList[idx] || `Матч ${fmtNumber(matchNumber)}`;
+        const mapName = mapNameRaw ? String(mapNameRaw) : '—';
+
+        let startSegment = null;
+        let endSegment = null;
+        let winnerName = null;
+        let isCompleted = false;
+        let durationDisplay = '—';
+
+        const durationSec = toNumber(matchData?.duration);
+        if (Number.isFinite(durationSec)) {
+          const formattedDuration = formatMatchDuration(durationSec);
+          if (formattedDuration) {
+            durationDisplay = escapeHtml(formattedDuration);
+          }
+        }
+
+        if (matchData) {
+          const startDate = matchData?.date ? new Date(matchData.date) : null;
+          if (startDate instanceof Date && !Number.isNaN(startDate.getTime())) {
+            startSegment = formatMatchDateTime(startDate);
+            if (Number.isFinite(durationSec)) {
+              const endDate = new Date(startDate.getTime() + durationSec * 1000);
+              endSegment = formatMatchDateTime(endDate);
+            }
+          }
+
+          const teams = Array.isArray(matchData?.teams) ? matchData.teams : [];
+          const winnerEntry = teams.reduce((best, current) => {
+            const currentPlacement = toNumber(current?.placement);
+            if (!Number.isFinite(currentPlacement)) return best;
+            if (!best) return current;
+            const bestPlacement = toNumber(best?.placement);
+            if (!Number.isFinite(bestPlacement) || currentPlacement < bestPlacement) return current;
+            if (currentPlacement === bestPlacement) {
+              const currentKills = toNumber(current?.kills);
+              const bestKills = toNumber(best?.kills);
+              if (Number.isFinite(currentKills) && Number.isFinite(bestKills) && currentKills > bestKills) {
+                return current;
+              }
+            }
+            return best;
+          }, null);
+
+          if (winnerEntry) {
+            const winnerId = toNumber(winnerEntry.teamId);
+            if (Number.isFinite(winnerId)) {
+              winnerName = getTeamDisplayName(winnerId);
+              isCompleted = true;
+            }
+          }
+        }
+
+        const startText = startSegment
+          ? `<time datetime="${escapeHtml(startSegment.iso)}">${escapeHtml(startSegment.text)}</time>`
+          : '—';
+        const endText = endSegment
+          ? `<time datetime="${escapeHtml(endSegment.iso)}">${escapeHtml(endSegment.text)}</time>`
+          : '—';
+        const winnerText = winnerName ? escapeHtml(winnerName) : '—';
+        const tileClass = isCompleted ? 'status-tile' : 'status-tile status-tile--pending';
+
+        return `
+          <div class="${tileClass}">
+            <div class="status-tile__header">
+              <span class="status-tile__number">Матч ${fmtNumber(matchNumber)}</span>
+              <span class="status-tile__map">${escapeHtml(mapName)}</span>
+            </div>
+            ${isCompleted ? '' : '<div class="status-tile__placeholder" aria-hidden="true">?</div>'}
+            <div class="status-tile__times">
+              <div class="status-tile__time">
+                <span class="status-tile__label">Начало</span>
+                <span class="status-tile__value">${startText}</span>
+              </div>
+              <div class="status-tile__time">
+                <span class="status-tile__label">Конец</span>
+                <span class="status-tile__value">${endText}</span>
+              </div>
+              <div class="status-tile__time status-tile__time--duration">
+                <span class="status-tile__label">Длительность</span>
+                <span class="status-tile__value">${durationDisplay}</span>
+              </div>
+            </div>
+            <div class="status-tile__winner">
+              <span class="status-tile__label">Победитель</span>
+              <span class="status-tile__winner-name">${isCompleted ? winnerText : '?'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    const renderMatchTiles = visible => {
+      if (!statusEls?.tiles) return;
+      if (!visible) {
+        statusEls.tiles.hidden = true;
+        statusEls.tiles.innerHTML = '';
+        return;
+      }
+      const html = buildMatchTilesHtml();
+      if (!html) {
+        statusEls.tiles.hidden = true;
+        statusEls.tiles.innerHTML = '';
+        return;
+      }
+      statusEls.tiles.hidden = false;
+      statusEls.tiles.innerHTML = html;
+    };
+
     const teamRows = Array.from(ensureTeamStats.cache.values()).map(stats => {
       const avg = stats.placementCount ? stats.placementSum / stats.placementCount : null;
       return {
@@ -521,7 +702,8 @@ async function init() {
 
       if (beforeStart) {
         statusEls.state && (statusEls.state.textContent = 'Турнир ещё не начался');
-        statusEls.message && (statusEls.message.textContent = 'До начала турнира осталось:');
+        setStatusMessage('До начала турнира осталось:');
+        renderMatchTiles(false);
         if (statusEls.countdown) {
           statusEls.countdown.hidden = false;
           renderCountdown(startDate.getTime() - now.getTime());
@@ -540,16 +722,18 @@ async function init() {
 
       if (allMatchesPlayed && hasResults) {
         statusEls.state && (statusEls.state.textContent = 'Турнир завершён');
-        statusEls.message && (statusEls.message.textContent = winners.length >= 3
+        setStatusMessage(winners.length >= 3
           ? 'Поздравляем призёров турнира:'
           : 'Итоги турнира: призовые места');
+        renderMatchTiles(true);
         renderPodium(winners);
         return;
       }
 
       if ((hasValidStart && now >= startDate) || hasResults) {
         statusEls.state && (statusEls.state.textContent = 'Турнир в процессе');
-        statusEls.message && (statusEls.message.textContent = 'Турнир начался, ожидание результатов...');
+        setStatusMessage('');
+        renderMatchTiles(true);
         if (statusEls.podium) {
           statusEls.podium.hidden = true;
           statusEls.podium.innerHTML = '';
@@ -558,7 +742,8 @@ async function init() {
       }
 
       statusEls.state && (statusEls.state.textContent = 'Статус турнира');
-      statusEls.message && (statusEls.message.textContent = 'Информация будет обновлена по мере появления данных.');
+      setStatusMessage('Информация будет обновлена по мере появления данных.');
+      renderMatchTiles(false);
       if (statusEls.podium) {
         statusEls.podium.hidden = true;
         statusEls.podium.innerHTML = '';
