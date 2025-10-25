@@ -887,7 +887,7 @@ async function init() {
       if (!statusEls?.card) return;
       const now = new Date();
       const beforeStart = hasValidStart && now < startDate;
-      const winners = teamRows.filter(row => (row.matches ?? 0) > 0 || (row.points ?? 0) !== 0).slice(0, 3);
+      const winners = teamRows.filter(row => (row.matches ?? 0) > 0 || (row.points ?? 0) !== 0).slice(0, 4);
       const hasResults = matchCount > 0 && winners.length > 0;
       const allMatchesPlayed = (expectedMatchesCount != null && expectedMatchesCount > 0)
         ? matchCount >= expectedMatchesCount
