@@ -857,7 +857,7 @@ async function init() {
       const slots = [
         { place: 2, modifier: 'second', data: winners[1] },
         { place: 1, modifier: 'first', data: winners[0] },
-        { place: 3, modifier: 'third', data: winners[2] }
+        { place: 3, modifier: 'third', data: winners[3] }
       ].filter(slot => slot.data);
       if (!slots.length) {
         statusEls.podium.innerHTML = '';
