@@ -226,7 +226,7 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
 .status-podium__block{width:132px; min-height:120px; padding:18px 16px; border-radius:20px; display:flex; flex-direction:column; align-items:center; gap:8px; color:#0a101b; box-shadow:0 16px 40px rgba(6,8,12,.45)}
 .status-podium__slot--first .status-podium__block{width:168px; min-height:150px; background:linear-gradient(180deg, #ffe7a0, #ffb43f)}
 .status-podium__slot--second .status-podium__block{
-  height:130px;
+  height:136px;
   background:linear-gradient(180deg, #ecf1ff, #b8c2d8);
 }
 .status-podium__slot--third .status-podium__block{background:linear-gradient(180deg, #fde0b2, #d18a43)}
