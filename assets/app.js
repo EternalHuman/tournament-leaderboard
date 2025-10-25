@@ -196,8 +196,7 @@ const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSur
   const revivesScore = safe(revives) * 1.5;
   const adrScore = safe(adr) * 0.02;
   const timeScore = safe(timeSurvived) / 120;
-  const dbnoPenalty = safe(dbnos) * 0.7;
-  const impact = killsScore + assistsScore + revivesScore + adrScore + timeScore - dbnoPenalty;
+  const impact = killsScore + assistsScore + revivesScore + adrScore + timeScore;
   return impact;
 };
 
