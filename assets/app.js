@@ -54,6 +54,141 @@ const escapeHtml = value => {
 };
 const $ = sel => document.querySelector(sel);
 
+let infoTooltipEl = null;
+let infoTooltipActiveIcon = null;
+let infoTooltipInitialized = false;
+
+function ensureInfoTooltipElement() {
+  if (!infoTooltipEl) {
+    infoTooltipEl = document.createElement('div');
+    infoTooltipEl.className = 'info-tooltip';
+    infoTooltipEl.setAttribute('role', 'tooltip');
+    infoTooltipEl.style.display = 'none';
+    document.body.appendChild(infoTooltipEl);
+  }
+  if (!infoTooltipInitialized) {
+    infoTooltipInitialized = true;
+    document.addEventListener('click', event => {
+      if (!infoTooltipActiveIcon) return;
+      if (infoTooltipEl.contains(event.target)) return;
+      const icon = event.target?.closest?.('.info-icon');
+      if (icon === infoTooltipActiveIcon) return;
+      hideInfoTooltip();
+    });
+    document.addEventListener('keydown', event => {
+      if (!infoTooltipActiveIcon) return;
+      if (event.key === 'Escape' || event.key === 'Esc') {
+        hideInfoTooltip();
+      }
+    });
+    window.addEventListener('scroll', () => {
+      if (!infoTooltipActiveIcon) return;
+      hideInfoTooltip();
+    }, true);
+    window.addEventListener('resize', () => {
+      if (!infoTooltipActiveIcon) return;
+      infoTooltipEl.classList.remove('info-tooltip--visible');
+      requestAnimationFrame(() => {
+        if (!infoTooltipActiveIcon) return;
+        positionInfoTooltip(infoTooltipActiveIcon);
+        infoTooltipEl.classList.add('info-tooltip--visible');
+      });
+    });
+  }
+  return infoTooltipEl;
+}
+
+function hideInfoTooltip() {
+  if (!infoTooltipActiveIcon || !infoTooltipEl) return;
+  infoTooltipActiveIcon.setAttribute('aria-expanded', 'false');
+  infoTooltipActiveIcon = null;
+  infoTooltipEl.classList.remove('info-tooltip--visible');
+  infoTooltipEl.style.display = 'none';
+  infoTooltipEl.textContent = '';
+}
+
+function positionInfoTooltip(icon) {
+  if (!infoTooltipEl) return;
+  const rect = icon.getBoundingClientRect();
+  const tooltipRect = infoTooltipEl.getBoundingClientRect();
+  const viewportWidth = document.documentElement.clientWidth;
+  const scrollX = window.pageXOffset || document.documentElement.scrollLeft || 0;
+  const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+  let left = rect.left + scrollX + rect.width / 2 - tooltipRect.width / 2;
+  const minLeft = scrollX + 8;
+  const maxLeft = scrollX + viewportWidth - tooltipRect.width - 8;
+  if (left < minLeft) left = minLeft;
+  if (left > maxLeft) left = Math.max(minLeft, maxLeft);
+  const top = rect.bottom + scrollY + 10;
+  infoTooltipEl.style.left = `${Math.round(left)}px`;
+  infoTooltipEl.style.top = `${Math.round(top)}px`;
+}
+
+function showInfoTooltip(icon) {
+  if (!icon) return;
+  const tooltip = ensureInfoTooltipElement();
+  const text = icon.dataset.tooltip || icon.getAttribute('title') || icon.getAttribute('aria-label');
+  if (!text) return;
+  if (infoTooltipActiveIcon === icon) {
+    hideInfoTooltip();
+    return;
+  }
+  if (infoTooltipActiveIcon) {
+    infoTooltipActiveIcon.setAttribute('aria-expanded', 'false');
+  }
+  if (icon.getAttribute('title')) {
+    icon.dataset.tooltip = icon.getAttribute('title');
+    icon.removeAttribute('title');
+  }
+  infoTooltipActiveIcon = icon;
+  tooltip.textContent = text;
+  tooltip.style.display = 'block';
+  tooltip.classList.remove('info-tooltip--visible');
+  requestAnimationFrame(() => {
+    positionInfoTooltip(icon);
+    tooltip.classList.add('info-tooltip--visible');
+    icon.setAttribute('aria-expanded', 'true');
+  });
+}
+
+function attachInfoIcon(icon) {
+  if (!icon || icon.dataset.tooltipBound === '1') return;
+  ensureInfoTooltipElement();
+  if (!icon.dataset.tooltip && icon.getAttribute('title')) {
+    icon.dataset.tooltip = icon.getAttribute('title');
+    icon.removeAttribute('title');
+  }
+  if (!icon.hasAttribute('aria-expanded')) {
+    icon.setAttribute('aria-expanded', 'false');
+  }
+  icon.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    showInfoTooltip(icon);
+  });
+  icon.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.stopPropagation();
+      showInfoTooltip(icon);
+    }
+  });
+  icon.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (infoTooltipActiveIcon === icon && document.activeElement !== icon) {
+        hideInfoTooltip();
+      }
+    }, 10);
+  });
+  icon.dataset.tooltipBound = '1';
+}
+
+function setupInfoTooltips(root = document) {
+  if (!root) return;
+  ensureInfoTooltipElement();
+  root.querySelectorAll('.info-icon').forEach(attachInfoIcon);
+}
+
 const computeImpact = ({ kills = 0, assists = 0, revives = 0, dbnos = 0, timeSurvived = 0, adr = 0 }) => {
   const safe = value => (Number.isFinite(value) ? value : 0);
   const killsScore = safe(kills) * 5;
@@ -180,6 +315,7 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
       return String(aV??'').localeCompare(String(bV??''), 'ru', {numeric:true, sensitivity:'base'})*m;
     });
     const tbody = tableEl.querySelector('tbody');
+    hideInfoTooltip();
     tbody.innerHTML='';
     for (const r of data) {
       const tr = document.createElement('tr');
@@ -187,10 +323,33 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
         const td = document.createElement('td');
         td.className = c.num ? 'num' : '';
         td.dataset.label = c.title;
-        let value = r[c.key];
-        if (c.format === 'float') value = fmtFloat(value);
-        else if (c.format === 'int') value = fmtNumber(value);
-        td.textContent = value ?? '';
+        const rawValue = r[c.key];
+        let formattedValue = rawValue;
+        if (c.format === 'float') formattedValue = fmtFloat(rawValue);
+        else if (c.format === 'int') formattedValue = fmtNumber(rawValue);
+        if (formattedValue == null) formattedValue = '';
+        const displayText = formattedValue === '' ? '—' : formattedValue;
+        const tooltipText = typeof c.tooltip === 'function'
+          ? c.tooltip({ row: r, raw: rawValue, formatted: formattedValue, column: c })
+          : c.tooltip;
+        if (tooltipText) {
+          const wrapper = document.createElement('span');
+          wrapper.className = 'cell-with-icon';
+          const valueSpan = document.createElement('span');
+          valueSpan.className = 'cell-value';
+          valueSpan.textContent = displayText;
+          wrapper.appendChild(valueSpan);
+          const icon = document.createElement('button');
+          icon.type = 'button';
+          icon.className = 'info-icon';
+          icon.textContent = 'i';
+          icon.setAttribute('aria-label', `Детализация: ${c.title}`);
+          icon.dataset.tooltip = tooltipText;
+          wrapper.appendChild(icon);
+          td.appendChild(wrapper);
+        } else {
+          td.textContent = displayText;
+        }
         tr.appendChild(td);
       }
       tbody.appendChild(tr);
@@ -199,6 +358,7 @@ function sortable(tableEl, rows, columns, counterEl, filterInput, defaultSort) {
       th.dataset.dir = th.dataset.key === state.key ? state.dir : '';
     });
     if (counterEl) counterEl.textContent = data.length + ' записей';
+    setupInfoTooltips(tbody);
   }
 
   tableEl.querySelectorAll('th.sortable').forEach(th => {
@@ -220,6 +380,8 @@ async function init() {
     const m = window.__meta;
     const updated = m?.generatedAt ? new Date(m.generatedAt).toLocaleString('ru-RU') : 'неизвестно';
     $('#updated').textContent = 'Обновлено: ' + updated;
+
+    setupInfoTooltips(document);
 
     const [ tInfo, teamMeta ] = await Promise.all([
       loadJSON('data/tournament.json'),
@@ -422,27 +584,59 @@ async function init() {
             assists: 0,
             revives: 0,
             dbnos: 0,
-            timeSurvived: 0
+            timeSurvived: 0,
+            perMatch: []
           };
           playerStats.set(name, stat);
         }
         if (Number.isFinite(teamId)) stat.teamId = Number(teamId);
         stat.matches += 1;
         const adr = toNumber(player.adr);
-        if (Number.isFinite(adr)) {
+        const adrValue = Number.isFinite(adr) ? adr : null;
+        if (adrValue != null) {
           stat.adrTotal += adr;
           stat.adrSamples += 1;
         }
         const kills = toNumber(player.kills);
-        if (Number.isFinite(kills)) stat.kills += kills;
+        const killsValue = Number.isFinite(kills) ? kills : null;
+        if (killsValue != null) stat.kills += killsValue;
         const assists = toNumber(player.assists);
-        if (Number.isFinite(assists)) stat.assists += assists;
+        const assistsValue = Number.isFinite(assists) ? assists : null;
+        if (assistsValue != null) stat.assists += assistsValue;
         const revives = toNumber(player.revives);
-        if (Number.isFinite(revives)) stat.revives += revives;
+        const revivesValue = Number.isFinite(revives) ? revives : null;
+        if (revivesValue != null) stat.revives += revivesValue;
         const dbnos = toNumber(player.DBNOs ?? player.dbnos);
-        if (Number.isFinite(dbnos)) stat.dbnos += dbnos;
+        const dbnosValue = Number.isFinite(dbnos) ? dbnos : null;
+        if (dbnosValue != null) stat.dbnos += dbnosValue;
         const timeSurvived = toNumber(player.timeSurvived);
-        if (Number.isFinite(timeSurvived)) stat.timeSurvived += timeSurvived;
+        const timeSurvivedValue = Number.isFinite(timeSurvived) ? timeSurvived : null;
+        if (timeSurvivedValue != null) stat.timeSurvived += timeSurvivedValue;
+
+        const matchNumberRaw = toNumber(match?.matchId);
+        const matchNumber = Number.isFinite(matchNumberRaw)
+          ? matchNumberRaw
+          : (Number.isFinite(slot) ? slot + 1 : idx + 1);
+        const perMatchEntry = {
+          matchNumber,
+          slot: Number.isFinite(slot) ? slot : null,
+          matchLabel: `Матч ${fmtNumber(matchNumber)}`,
+          kills: killsValue,
+          assists: assistsValue,
+          revives: revivesValue,
+          dbnos: dbnosValue,
+          timeSurvived: timeSurvivedValue,
+          adr: adrValue,
+          impact: computeImpact({
+            kills: killsValue ?? 0,
+            assists: assistsValue ?? 0,
+            revives: revivesValue ?? 0,
+            dbnos: dbnosValue ?? 0,
+            timeSurvived: timeSurvivedValue ?? 0,
+            adr: adrValue ?? 0
+          })
+        };
+        stat.perMatch.push(perMatchEntry);
       });
 
       return { ...match, slot };
@@ -766,6 +960,17 @@ async function init() {
     const playerRows = Array.from(playerStats.values()).map(stat => {
       const teamInfo = stat.teamId != null ? teamsById.get(stat.teamId) : null;
       const avgAdr = stat.adrSamples ? stat.adrTotal / stat.adrSamples : null;
+      const perMatch = Array.isArray(stat.perMatch)
+        ? stat.perMatch.slice().sort((a, b) => {
+            const aNum = Number.isFinite(a?.matchNumber)
+              ? a.matchNumber
+              : (Number.isFinite(a?.slot) ? a.slot + 1 : Number.POSITIVE_INFINITY);
+            const bNum = Number.isFinite(b?.matchNumber)
+              ? b.matchNumber
+              : (Number.isFinite(b?.slot) ? b.slot + 1 : Number.POSITIVE_INFINITY);
+            return aNum - bNum;
+          })
+        : [];
       const impact = computeImpact({
         kills: stat.kills,
         assists: stat.assists,
@@ -784,7 +989,8 @@ async function init() {
         revives: stat.revives,
         dbnos: stat.dbnos,
         timeSurvived: stat.timeSurvived,
-        matches: stat.matches
+        matches: stat.matches,
+        perMatch
       };
     });
 
@@ -798,6 +1004,33 @@ async function init() {
       if (adrB !== adrA) return adrB - adrA;
       return String(a.player ?? '').localeCompare(String(b.player ?? ''), 'ru', { sensitivity: 'base' });
     });
+
+    const buildPerMatchTooltip = (row, key, { format = 'int', suffix = '' } = {}) => {
+      const entries = Array.isArray(row?.perMatch) ? row.perMatch : [];
+      if (!entries.length) return '';
+      const lines = entries.map(entry => {
+        const label = entry?.matchLabel || `Матч ${fmtNumber(entry?.matchNumber ?? '')}`;
+        const rawValue = entry?.[key];
+        let formatted = '—';
+        if (rawValue != null && !(typeof rawValue === 'number' && !Number.isFinite(rawValue))) {
+          if (format === 'float') {
+            formatted = fmtFloat(rawValue);
+          } else if (format === 'seconds') {
+            const secondsValue = Math.max(0, Math.floor(rawValue));
+            const mmss = formatMatchDuration(secondsValue);
+            const secondsText = fmtNumber(secondsValue);
+            formatted = mmss ? `${secondsText} с (${mmss})` : `${secondsText} с`;
+          } else {
+            formatted = fmtNumber(rawValue);
+          }
+        }
+        if (suffix && formatted !== '—') {
+          formatted += suffix;
+        }
+        return `${label}: ${formatted}`;
+      });
+      return lines.join('\n');
+    };
 
     // Teams
     const teamCols = [
@@ -916,128 +1149,17 @@ async function init() {
     }
     sortable($('#teamsTable'), teamRows, teamCols, $('#teamCount'), $('#teamFilter'), {key:'place', dir:'asc'});
 
-    const infoIcons = Array.from(document.querySelectorAll('.info-icon'));
-    if (infoIcons.length) {
-      const tooltip = document.createElement('div');
-      tooltip.className = 'info-tooltip';
-      tooltip.setAttribute('role', 'tooltip');
-      tooltip.style.display = 'none';
-      document.body.appendChild(tooltip);
-
-      let activeIcon = null;
-
-      const hideTooltip = () => {
-        if (!activeIcon) return;
-        activeIcon.setAttribute('aria-expanded', 'false');
-        activeIcon = null;
-        tooltip.classList.remove('info-tooltip--visible');
-        tooltip.style.display = 'none';
-        tooltip.textContent = '';
-      };
-
-      const positionTooltip = icon => {
-        const rect = icon.getBoundingClientRect();
-        const tooltipRect = tooltip.getBoundingClientRect();
-        const viewportWidth = document.documentElement.clientWidth;
-        const scrollX = window.pageXOffset || document.documentElement.scrollLeft || 0;
-        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-        let left = rect.left + scrollX + rect.width / 2 - tooltipRect.width / 2;
-        const minLeft = scrollX + 8;
-        const maxLeft = scrollX + viewportWidth - tooltipRect.width - 8;
-        if (left < minLeft) left = minLeft;
-        if (left > maxLeft) left = Math.max(minLeft, maxLeft);
-        const top = rect.bottom + scrollY + 10;
-        tooltip.style.left = `${Math.round(left)}px`;
-        tooltip.style.top = `${Math.round(top)}px`;
-      };
-
-      const showTooltip = icon => {
-        const text = icon.dataset.tooltip || icon.getAttribute('title') || icon.getAttribute('aria-label');
-        if (!text) return;
-        if (activeIcon === icon) {
-          hideTooltip();
-          return;
-        }
-        if (activeIcon) {
-          activeIcon.setAttribute('aria-expanded', 'false');
-        }
-        activeIcon = icon;
-        tooltip.textContent = text;
-        tooltip.style.display = 'block';
-        tooltip.classList.remove('info-tooltip--visible');
-        requestAnimationFrame(() => {
-          positionTooltip(icon);
-          tooltip.classList.add('info-tooltip--visible');
-          icon.setAttribute('aria-expanded', 'true');
-        });
-      };
-
-      infoIcons.forEach(icon => {
-        if (!icon.dataset.tooltip && icon.getAttribute('title')) {
-          icon.dataset.tooltip = icon.getAttribute('title');
-        }
-        icon.addEventListener('click', e => {
-          e.preventDefault();
-          e.stopPropagation();
-          showTooltip(icon);
-        });
-        icon.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            e.stopPropagation();
-            showTooltip(icon);
-          }
-        });
-        icon.addEventListener('blur', () => {
-          setTimeout(() => {
-            if (activeIcon === icon && document.activeElement !== icon) {
-              hideTooltip();
-            }
-          }, 10);
-        });
-      });
-
-      document.addEventListener('click', e => {
-        if (!activeIcon) return;
-        if (!tooltip.contains(e.target) && e.target !== activeIcon) {
-          hideTooltip();
-        }
-      });
-
-      document.addEventListener('keydown', e => {
-        if (!activeIcon) return;
-        if (e.key === 'Escape' || e.key === 'Esc') {
-          hideTooltip();
-        }
-      });
-
-      window.addEventListener('scroll', () => {
-        if (!activeIcon) return;
-        hideTooltip();
-      }, true);
-
-      window.addEventListener('resize', () => {
-        if (!activeIcon) return;
-        tooltip.classList.remove('info-tooltip--visible');
-        requestAnimationFrame(() => {
-          if (!activeIcon) return;
-          positionTooltip(activeIcon);
-          tooltip.classList.add('info-tooltip--visible');
-        });
-      });
-    }
-
     // Players
     const playerCols = [
-      { key:'impact',  title:'Импакт', num:true, format:'float' },
+      { key:'impact',  title:'Импакт', num:true, format:'float', tooltip: ({ row }) => buildPerMatchTooltip(row, 'impact', { format: 'float' }) },
       { key:'player',  title:'Игрок' },
       { key:'team',    title:'Команда' },
-      { key:'kills',   title:'Убийства', num:true, format:'int' },
-      { key:'adr',     title:'ADR', num:true, format:'float' },
-      { key:'assists', title:'Помощь', num:true, format:'int' },
-      { key:'revives', title:'Ревайвы', num:true, format:'int' },
-      { key:'dbnos',   title:'DBNOs', num:true, format:'int' },
-      { key:'timeSurvived', title:'Время (с)', num:true, format:'int' },
+      { key:'kills',   title:'Убийства', num:true, format:'int', tooltip: ({ row }) => buildPerMatchTooltip(row, 'kills', { format: 'int' }) },
+      { key:'adr',     title:'ADR', num:true, format:'float', tooltip: ({ row }) => buildPerMatchTooltip(row, 'adr', { format: 'float' }) },
+      { key:'assists', title:'Помощь', num:true, format:'int', tooltip: ({ row }) => buildPerMatchTooltip(row, 'assists', { format: 'int' }) },
+      { key:'revives', title:'Ревайвы', num:true, format:'int', tooltip: ({ row }) => buildPerMatchTooltip(row, 'revives', { format: 'int' }) },
+      { key:'dbnos',   title:'DBNOs', num:true, format:'int', tooltip: ({ row }) => buildPerMatchTooltip(row, 'dbnos', { format: 'int' }) },
+      { key:'timeSurvived', title:'Время (с)', num:true, format:'int', tooltip: ({ row }) => buildPerMatchTooltip(row, 'timeSurvived', { format: 'seconds' }) },
       { key:'matches', title:'Матчи', num:true, format:'int' },
     ];
     sortable($('#playersTable'), playerRows, playerCols, $('#playerCount'), $('#playerFilter'), {key:'impact', dir:'desc'});
