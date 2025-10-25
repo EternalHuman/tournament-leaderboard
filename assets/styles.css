@@ -228,7 +228,7 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
 .status-podium__slot--second .status-podium__block{background:linear-gradient(180deg, #ecf1ff, #b8c2d8)}
 .status-podium__slot--third .status-podium__block{background:linear-gradient(180deg, #fde0b2, #d18a43)}
 .status-podium__place{font-size:28px; font-weight:700; letter-spacing:.06em}
-.status-podium__team{font-size:18px; font-weight:600; color:#0a101b; text-align:center; word-break:break-word}
+.status-podium__team{font-size:16px; font-weight:600; color:#0a101b; text-align:center; word-break:break-word}
 .status-podium__points{font-size:13px; font-weight:600; color:rgba(10,16,27,.65)}
 
 .status-tiles{
