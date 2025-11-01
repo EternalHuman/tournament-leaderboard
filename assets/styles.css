@@ -244,12 +244,12 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
   display:flex;
   flex-direction:column;
   gap:12px;
-  padding:16px 18px;
+  padding:18px 20px;
   border-radius:18px;
   background:rgba(16,26,45,.72);
   border:1px solid rgba(122,167,255,.16);
   box-shadow:0 14px 34px rgba(8,15,28,.28);
-  min-height:168px;
+  min-height:208px;
   overflow:hidden;
 }
 .status-tile__header{
@@ -307,14 +307,19 @@ h1{margin:0; font-size:20px; letter-spacing:.01em;}
   margin-top:auto;
   display:flex;
   flex-direction:column;
-  gap:4px;
+  justify-content:flex-end;
+  gap:6px;
   width:100%;
+  min-height:72px;
 }
 .status-tile__winner-name{
-  font-size:15px;
+  display:block;
+  font-size:16px;
   font-weight:700;
+  line-height:1.35;
   color:var(--accent2);
   word-break:break-word;
+  word-wrap:break-word;
 }
 .status-tile__placeholder{
   align-self:center;
